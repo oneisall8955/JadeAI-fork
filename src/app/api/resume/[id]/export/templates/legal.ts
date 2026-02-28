@@ -7,6 +7,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
 import { buildClassicSectionContent } from './classic';
@@ -26,7 +27,7 @@ function buildLegalSectionContent(section: Section): string {
 
   if (section.type === 'work_experience') {
     return `<div class="space-y-4">${((c as WorkExperienceContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.position)}</span>${it.company ? `<span class="text-sm" style="color:${ACCENT}">, ${esc(it.company)}</span>` : ''}</div><span class="shrink-0 text-xs italic" style="color:${MUTED}">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.position)}</span>${it.company ? `<span class="text-sm" style="color:${ACCENT}">, ${esc(it.company)}</span>` : ''}${it.location ? `<span class="text-sm" style="color:${MUTED}"> (${esc(it.location)})</span>` : ''}</div><span class="shrink-0 text-xs italic" style="color:${MUTED}">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
       ${it.description ? `<p class="mt-1 text-sm" style="color:${BODY_TEXT}">${esc(it.description)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1.5 list-disc pl-5 space-y-0.5">${it.highlights.filter(Boolean).map((h: string) => `<li class="text-sm" style="color:${BODY_TEXT}">${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -34,7 +35,7 @@ function buildLegalSectionContent(section: Section): string {
 
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</span>${it.institution ? `<span class="text-sm" style="color:${MUTED}">, ${esc(it.institution)}</span>` : ''}</div><span class="shrink-0 text-xs italic" style="color:${MUTED}">${esc(it.startDate)} - ${esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</span>${it.institution ? `<span class="text-sm" style="color:${MUTED}">, ${esc(it.institution)}</span>` : ''}${it.location ? `<span class="text-sm" style="color:${MUTED}"> (${esc(it.location)})</span>` : ''}</div><span class="shrink-0 text-xs italic" style="color:${MUTED}">${esc(it.startDate)} - ${esc(it.endDate)}</span></div>
       ${it.gpa ? `<p class="text-xs" style="color:${MUTED}">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-5 space-y-0.5">${it.highlights.filter(Boolean).map((h: string) => `<li class="text-sm" style="color:${BODY_TEXT}">${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -65,6 +66,14 @@ function buildLegalSectionContent(section: Section): string {
     return `<div class="space-y-1.5">${((c as LanguagesContent).items || []).map((it: any) =>
       `<div class="text-sm"><span class="font-bold" style="color:${PRIMARY}">${esc(it.language)}</span><span style="color:${MUTED}"> — ${esc(it.proficiency)}</span></div>`
     ).join('')}</div>`;
+  }
+
+  if (section.type === 'github') {
+    return `<div class="space-y-3">${((c as GitHubContent).items || []).map((it: any) => `<div>
+      <div class="flex items-baseline justify-between"><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.name)}</span><span class="shrink-0 text-xs italic" style="color:${MUTED}">⭐ ${it.stars?.toLocaleString() ?? 0}</span></div>
+      ${it.language ? `<span class="text-xs" style="color:${ACCENT}">${esc(it.language)}</span>` : ''}
+      ${it.description ? `<p class="mt-1 text-sm" style="color:${BODY_TEXT}">${esc(it.description)}</p>` : ''}
+    </div>`).join('')}</div>`;
   }
 
   if (section.type === 'custom') {

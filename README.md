@@ -68,13 +68,15 @@ Build professional resumes with drag-and-drop editing, real-time AI optimization
 
 ### Export & Sharing
 
-- **Multi-Format Export** — PDF (Puppeteer + Chromium), DOCX, HTML, TXT, JSON
+- **Multi-Format Export** — PDF (Puppeteer + Chromium), Smart One-Page PDF (auto-fit to single page), DOCX, HTML, TXT, JSON
+- **JSON Import** — Import a previously exported JSON file to restore or create a resume; supported both in the editor (overwrite current) and on the dashboard (create new)
 - **Link Sharing** — Token-based shareable links with optional password protection
 - **View Counter** — Track how many times a shared resume has been viewed
 
 ### Management
 
 - **Multi-Resume Dashboard** — Grid and list views, search, sort (by date, name)
+- **Import from JSON** — Create a new resume from a JSON export directly on the dashboard
 - **Duplicate & Rename** — Quick resume management actions
 - **Interactive Tours** — Step-by-step onboarding for first-time users
 
@@ -360,6 +362,12 @@ Contributions are welcome! Here's how to get started:
 4. Push to the branch: `git push origin feat/your-feature`
 5. Open a Pull Request
 
+## Community
+
+Join the QQ group for discussion and support:
+
+<img src="images/chat-group.jpg" width="200" alt="QQ Group QR Code" />
+
 ## FAQ
 
 <details>
@@ -389,6 +397,10 @@ When `NEXT_PUBLIC_AUTH_ENABLED=false` (default), JadeAI uses browser fingerprint
 PDF export uses Puppeteer Core with @sparticuz/chromium. Each of the 50 templates has a dedicated server-side export handler that renders the resume to high-fidelity PDF. DOCX, HTML, TXT, and JSON exports are also supported.
 
 </details>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=twwch/JadeAI&type=date&legend=top-left)](https://www.star-history.com/#twwch/JadeAI&type=date&legend=top-left)
 
 ## License
 

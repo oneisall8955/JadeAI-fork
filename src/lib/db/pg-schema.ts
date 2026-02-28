@@ -77,3 +77,22 @@ export const chatMessages = pgTable('chat_messages', {
   metadata: text('metadata').default('{}'),
   createdAt: integer('created_at').notNull().default(epochNow),
 });
+
+export const jdAnalyses = pgTable('jd_analyses', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  resumeId: text('resume_id').notNull(),
+  jobDescription: text('job_description').notNull(),
+  result: text('result').notNull(),
+  overallScore: integer('overall_score').notNull(),
+  atsScore: integer('ats_score').notNull(),
+  createdAt: integer('created_at').notNull().default(epochNow),
+});
+
+export const grammarChecks = pgTable('grammar_checks', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  resumeId: text('resume_id').notNull(),
+  result: text('result').notNull(),
+  score: integer('score').notNull(),
+  issueCount: integer('issue_count').notNull(),
+  createdAt: integer('created_at').notNull().default(epochNow),
+});

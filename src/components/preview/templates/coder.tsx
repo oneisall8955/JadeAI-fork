@@ -11,6 +11,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 
@@ -218,6 +219,7 @@ function CoderMainContent({ section }: { section: any }) {
               <div>
                 <span className="text-sm font-bold" style={{ color: DARK }}>{item.position}</span>
                 {item.company && <span className="text-sm" style={{ color: BLUE }}>{' @ '}{item.company}</span>}
+                {item.location && <span className="text-xs text-zinc-400">, {item.location}</span>}
               </div>
               <span className="shrink-0 rounded px-2 py-0.5 text-[10px] font-medium" style={{ backgroundColor: '#f6f8fa', color: '#57606a' }}>
                 {item.startDate} - {item.current ? 'Present' : item.endDate}
@@ -249,7 +251,10 @@ function CoderMainContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: DARK }}>{item.institution}</h3>
               <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate}</span>
             </div>
-            <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
+            <p className="text-sm text-zinc-600">
+              {item.degree}{item.field ? ` in ${item.field}` : ''}
+              {item.location && <span className="text-zinc-400">, {item.location}</span>}
+            </p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 space-y-0.5">
@@ -299,6 +304,28 @@ function CoderMainContent({ section }: { section: any }) {
                 ))}
               </ul>
             )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (section.type === 'github') {
+    const items = (content as GitHubContent).items || [];
+    return (
+      <div className="space-y-3">
+        {items.map((item: any) => (
+          <div key={item.id}>
+            <div className="flex items-baseline justify-between">
+              <h3 className="text-sm font-bold" style={{ color: BLUE }}>{item.name}</h3>
+              <span className="text-xs text-zinc-400">{'\u2B50'} {item.stars?.toLocaleString()}</span>
+            </div>
+            {item.language && (
+              <span className="rounded-sm px-1.5 py-0.5 text-[10px] font-medium" style={{ backgroundColor: '#f6f8fa', color: '#57606a', border: '1px solid #d0d7de' }}>
+                {item.language}
+              </span>
+            )}
+            {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
           </div>
         ))}
       </div>

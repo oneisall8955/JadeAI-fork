@@ -49,6 +49,7 @@
     "templateCreative": "Creative",
     "templateAts": "ATS",
     "aiGenerate": "AI Generate",
+    "importJson": "Import JSON",
     "templateAcademic": "Academic",
     "templateElegant": "Elegant",
     "templateExecutive": "Executive",
@@ -124,7 +125,8 @@
       "translate": "Translate",
       "coverLetter": "Cover Letter",
       "grammarCheck": "Grammar",
-      "share": "Share"
+      "share": "Share",
+      "import": "Import"
     },
     "aiPolish": "AI Polish",
     "sidebar": {
@@ -141,6 +143,7 @@
       "projects": "Projects",
       "certifications": "Certifications",
       "languages": "Languages",
+      "github": "GitHub Projects",
       "custom": "Custom Section"
     },
     "fields": {
@@ -166,8 +169,21 @@
       "technologies": "Technologies",
       "language": "Language",
       "proficiency": "Proficiency",
+      "repoUrl": "Repository URL",
+      "stars": "Stars",
+      "repoName": "Repository Name",
+      "primaryLanguage": "Primary Language",
+      "fetchRepo": "Fetch Repo Info",
+      "fetchingRepo": "Fetching...",
       "addItem": "Add Item",
-      "removeItem": "Remove Item"
+      "removeItem": "Remove Item",
+      "clear": "Clear",
+      "dateDisplay": "{month} {year}",
+      "months": {
+        "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr",
+        "05": "May", "06": "Jun", "07": "Jul", "08": "Aug",
+        "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
+      }
     }
   },
   "ai": {
@@ -292,7 +308,17 @@
     "suggestedChange": "Suggested",
     "optimize": "Optimize Resume",
     "pasteJd": "Paste a job description to get started",
-    "noResults": "No analysis results available"
+    "noResults": "No analysis results available",
+    "newAnalysis": "New Analysis",
+    "historyTab": "History",
+    "noHistory": "No analysis history yet",
+    "deleteConfirm": "Delete this record?",
+    "deleteConfirmDesc": "This action cannot be undone. The record will be permanently deleted.",
+    "deleted": "Record deleted",
+    "jdPreview": "JD Preview",
+    "viewDetail": "View Details",
+    "loadingHistory": "Loading history...",
+    "jobDescriptionLabel": "Job Description"
   },
   "translate": {
     "title": "AI Resume Translation",
@@ -378,7 +404,16 @@
     "checkAgain": "Check Again",
     "fixAll": "Fix All",
     "close": "Close",
-    "error": "Grammar check failed. Please try again."
+    "error": "Grammar check failed. Please try again.",
+    "newCheck": "New Check",
+    "historyTab": "History",
+    "noHistory": "No check history yet",
+    "deleteConfirm": "Delete this record?",
+    "deleteConfirmDesc": "This action cannot be undone. The record will be permanently deleted.",
+    "deleted": "Record deleted",
+    "issueCountLabel": "{count} issues",
+    "viewDetail": "View Details",
+    "loadingHistory": "Loading history..."
   },
   "export": {
     "title": "Export Resume",
@@ -391,12 +426,28 @@
     "htmlDescription": "Web page format",
     "txt": "Plain Text",
     "txtDescription": "Simple text file",
+    "pdfOnePage": "Smart One-Page",
+    "pdfOnePageDescription": "Auto-fit to one page",
+    "pdfOnePageTooltip": "Very long resumes may fail to fit on one page",
     "json": "JSON",
     "jsonDescription": "Structured data",
     "export": "Export",
     "exporting": "Exporting...",
     "success": "Export successful!",
     "error": "Export failed. Please try again.",
+    "cancel": "Cancel"
+  },
+  "import": {
+    "title": "Import Resume",
+    "description": "Import a previously exported JSON file to replace current content",
+    "dashboardDescription": "Import a previously exported JSON file to create a new resume",
+    "selectFile": "Click to select or drag a .json file here",
+    "dragHint": "Supports .json files exported from JadeAI",
+    "importing": "Importing...",
+    "success": "Import successful!",
+    "error": "Import failed. Please try again.",
+    "invalidFormat": "Invalid file format. Please select a valid JSON file with sections data.",
+    "importBtn": "Import",
     "cancel": "Cancel"
   },
   "pdfOptions": {
@@ -522,8 +573,8 @@
         "description": "Easily rearrange sections, customize layouts, and build your resume exactly the way you want."
       },
       "export": {
-        "title": "Multi-Format Export",
-        "description": "Export your resume as PDF, Word, HTML, plain text, or JSON — ready for any application platform."
+        "title": "Import & Export",
+        "description": "Export as PDF, Smart One-Page PDF, Word, HTML, TXT, or JSON. Import a previously exported JSON to instantly restore or create a resume."
       },
       "sharing": {
         "title": "One-Click Sharing",

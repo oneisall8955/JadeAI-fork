@@ -7,6 +7,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { esc, getPersonalInfo, visibleSections, buildHighlights, type ResumeWithSections, type Section } from '../utils';
 
@@ -15,15 +16,16 @@ export function buildClassicSectionContent(section: Section): string {
   if (section.type === 'summary') return `<p class="text-sm text-zinc-600 leading-relaxed">${esc((c as SummaryContent).text)}</p>`;
   if (section.type === 'work_experience') {
     return `<div class="space-y-3">${((c as WorkExperienceContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><div><span class="font-semibold text-zinc-800 text-sm">${esc(it.position)}</span>${it.company ? `<span class="text-sm text-zinc-600"> at ${esc(it.company)}</span>` : ''}</div><span class="text-xs text-zinc-400">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="font-semibold text-zinc-800 text-sm">${esc(it.position)}</span>${it.company ? `<span class="text-sm text-zinc-600"> at ${esc(it.company)}</span>` : ''}${it.location ? `<span class="text-sm text-zinc-400"> , ${esc(it.location)}</span>` : ''}</div><span class="text-xs text-zinc-400">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
       ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-4">${buildHighlights(it.highlights, 'text-sm text-zinc-600')}</ul>` : ''}
     </div>`).join('')}</div>`;
   }
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><div><span class="font-semibold text-zinc-800 text-sm">${esc(it.degree)} ${it.field ? `in ${esc(it.field)}` : ''}</span>${it.institution ? `<span class="text-sm text-zinc-600"> - ${esc(it.institution)}</span>` : ''}</div><span class="text-xs text-zinc-400">${esc(it.startDate)} - ${esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="font-semibold text-zinc-800 text-sm">${esc(it.degree)} ${it.field ? `in ${esc(it.field)}` : ''}</span>${it.institution ? `<span class="text-sm text-zinc-600"> - ${esc(it.institution)}</span>` : ''}${it.location ? `<span class="text-sm text-zinc-400"> , ${esc(it.location)}</span>` : ''}</div><span class="text-xs text-zinc-400">${esc(it.startDate)} - ${esc(it.endDate)}</span></div>
       ${it.gpa ? `<p class="text-sm text-zinc-500">GPA: ${esc(it.gpa)}</p>` : ''}
+      ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-4">${buildHighlights(it.highlights, 'text-sm text-zinc-600')}</ul>` : ''}
     </div>`).join('')}</div>`;
   }
   if (section.type === 'skills') {
@@ -37,6 +39,13 @@ export function buildClassicSectionContent(section: Section): string {
       ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
       ${it.technologies?.length ? `<p class="mt-0.5 text-xs text-zinc-400">Tech: ${esc(it.technologies.join(', '))}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-4">${buildHighlights(it.highlights, 'text-sm text-zinc-600')}</ul>` : ''}
+    </div>`).join('')}</div>`;
+  }
+  if (section.type === 'github') {
+    return `<div class="space-y-3">${((c as GitHubContent).items || []).map((it: any) => `<div>
+      <div class="flex items-baseline justify-between"><span class="font-semibold text-zinc-800 text-sm">${esc(it.name)}</span><span class="text-xs text-zinc-400">${it.stars?.toLocaleString() ?? 0}</span></div>
+      ${it.language ? `<span class="text-xs text-zinc-500">${esc(it.language)}</span>` : ''}
+      ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
   if (section.type === 'certifications') {

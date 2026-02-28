@@ -11,6 +11,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 
@@ -85,7 +86,7 @@ function LuxeSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: TEXT }}>{item.position}</h3>
               <span className="shrink-0 text-xs italic" style={{ color: '#a8a29e' }}>{item.startDate} &ndash; {item.current ? 'Present' : item.endDate}</span>
             </div>
-            {item.company && <p className="text-sm" style={{ color: GOLD }}>{item.company}</p>}
+            {item.company && <p className="text-sm" style={{ color: GOLD }}>{item.company}{item.location ? `, ${item.location}` : ''}</p>}
             {item.description && <p className="mt-1 text-sm" style={{ color: '#44403c' }}>{item.description}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 list-none space-y-0.5">
@@ -112,7 +113,7 @@ function LuxeSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: TEXT }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</h3>
               <span className="shrink-0 text-xs italic" style={{ color: '#a8a29e' }}>{item.startDate} &ndash; {item.endDate}</span>
             </div>
-            {item.institution && <p className="text-sm" style={{ color: GOLD }}>{item.institution}</p>}
+            {item.institution && <p className="text-sm" style={{ color: GOLD }}>{item.institution}{item.location ? `, ${item.location}` : ''}</p>}
             {item.gpa && <p className="text-xs" style={{ color: '#a8a29e' }}>GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-none space-y-0.5">
@@ -198,6 +199,24 @@ function LuxeSectionContent({ section }: { section: any }) {
             <span className="h-1.5 w-1.5 rotate-45" style={{ backgroundColor: GOLD }} />
             <span className="text-sm font-bold" style={{ color: TEXT }}>{item.language}</span>
             <span className="text-xs" style={{ color: '#a8a29e' }}>{item.proficiency}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (section.type === 'github') {
+    const items = (content as GitHubContent).items || [];
+    return (
+      <div className="space-y-4">
+        {items.map((item: any) => (
+          <div key={item.id} className="border-l-2 pl-4" style={{ borderColor: GOLD }}>
+            <div className="flex items-baseline justify-between">
+              <h3 className="text-sm font-bold" style={{ color: TEXT }}>{item.name}</h3>
+              <span className="shrink-0 text-xs italic" style={{ color: '#a8a29e' }}>&#11088; {item.stars?.toLocaleString()}</span>
+            </div>
+            {item.language && <span className="text-xs" style={{ color: GOLD }}>{item.language}</span>}
+            {item.description && <p className="mt-0.5 text-sm" style={{ color: '#44403c' }}>{item.description}</p>}
           </div>
         ))}
       </div>

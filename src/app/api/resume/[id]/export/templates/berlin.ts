@@ -7,6 +7,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
 
@@ -23,7 +24,7 @@ function buildBerlinSectionContent(section: Section): string {
   if (section.type === 'work_experience') {
     return `<div class="space-y-4">${((c as WorkExperienceContent).items || []).map((it: any) => `<div class="border-l-4 pl-4" style="border-color:${YELLOW}">
       <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${TEXT}">${esc(it.position)}</h3><span class="shrink-0 text-xs font-bold" style="color:${BLUE}">${esc(it.startDate)} &ndash; ${it.current ? 'Present' : esc(it.endDate)}</span></div>
-      ${it.company ? `<p class="text-sm font-semibold" style="color:${BLUE}">${esc(it.company)}</p>` : ''}
+      ${it.company ? `<p class="text-sm font-semibold" style="color:${BLUE}">${esc(it.company)}${it.location ? `, ${esc(it.location)}` : ''}</p>` : ''}
       ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1.5 space-y-0.5">${it.highlights.filter(Boolean).map((h: string) => `<li class="flex items-start gap-2 text-sm text-zinc-600"><span class="mt-1.5 h-1.5 w-1.5 shrink-0" style="background-color:${RED_B}"></span>${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -32,7 +33,7 @@ function buildBerlinSectionContent(section: Section): string {
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div class="border-l-4 pl-4" style="border-color:${BLUE}">
       <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${TEXT}">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</h3><span class="shrink-0 text-xs" style="color:${BLUE}">${esc(it.startDate)} &ndash; ${esc(it.endDate)}</span></div>
-      ${it.institution ? `<p class="text-sm font-semibold" style="color:${YELLOW}">${esc(it.institution)}</p>` : ''}
+      ${it.institution ? `<p class="text-sm font-semibold" style="color:${YELLOW}">${esc(it.institution)}${it.location ? `, ${esc(it.location)}` : ''}</p>` : ''}
       ${it.gpa ? `<p class="text-xs text-zinc-500">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 space-y-0.5">${it.highlights.filter(Boolean).map((h: string) => `<li class="flex items-start gap-2 text-sm text-zinc-600"><span class="mt-1.5 h-1.5 w-1.5 shrink-0" style="background-color:${RED_B}"></span>${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -66,6 +67,14 @@ function buildBerlinSectionContent(section: Section): string {
     return `<div class="flex flex-wrap gap-2">${((c as LanguagesContent).items || []).map((it: any) =>
       `<div class="flex items-center gap-2 border px-3 py-1" style="border-color:${BLUE}"><span class="h-2 w-2 rounded-full" style="background-color:${YELLOW}"></span><span class="text-sm font-medium" style="color:${TEXT}">${esc(it.language)}</span><span class="text-xs text-zinc-400">${esc(it.proficiency)}</span></div>`
     ).join('')}</div>`;
+  }
+
+  if (section.type === 'github') {
+    return `<div class="space-y-3">${((c as GitHubContent).items || []).map((it: any) => `<div class="border-l-4 pl-4" style="border-color:${YELLOW}">
+      <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${BLUE}">${esc(it.name)}</h3><span class="shrink-0 text-xs font-bold" style="color:${BLUE}">&#11088; ${it.stars?.toLocaleString() ?? 0}</span></div>
+      ${it.language ? `<span class="text-xs font-medium" style="color:${TEXT}">${esc(it.language)}</span>` : ''}
+      ${it.description ? `<p class="mt-0.5 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
+    </div>`).join('')}</div>`;
   }
 
   if (section.type === 'custom') {

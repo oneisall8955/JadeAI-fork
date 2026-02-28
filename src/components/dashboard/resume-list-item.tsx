@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Copy, Trash2, MoreVertical, Pencil } from 'lucide-react';
 import {
   DropdownMenu,
@@ -44,7 +44,7 @@ export function ResumeListItem({ resume, onDelete, onDuplicate, onRename }: Resu
     }
   }, [isRenaming]);
 
-  const commitRename = () => {
+  const commitRename = useCallback(() => {
     const trimmed = renameValue.trim();
     if (trimmed && trimmed !== resume.title) {
       onRename(trimmed);
@@ -53,14 +53,35 @@ export function ResumeListItem({ resume, onDelete, onDuplicate, onRename }: Resu
     }
     setIsRenaming(false);
     renamingRef.current = false;
-  };
+  }, [renameValue, resume.title, onRename]);
+
+  // Commit rename on any click outside the input (fires before blur)
+  useEffect(() => {
+    if (!isRenaming) return;
+    const handleMouseDown = (e: MouseEvent) => {
+      if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
+        commitRename();
+      }
+    };
+    document.addEventListener('mousedown', handleMouseDown, true);
+    return () => document.removeEventListener('mousedown', handleMouseDown, true);
+  }, [isRenaming, commitRename]);
+
+  // On blur, refocus if still renaming (handles Radix focus stealing)
+  const handleBlur = useCallback(() => {
+    requestAnimationFrame(() => {
+      if (renamingRef.current && inputRef.current) {
+        inputRef.current.focus();
+      }
+    });
+  }, []);
 
   const labelKey = templateLabelKeys[resume.template] || 'dashboard.templateClassic';
   const templateLabel = t(labelKey);
 
   return (
     <div
-      className="group flex cursor-pointer items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-card"
+      className={`group flex items-center gap-4 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition-all duration-200 dark:border-zinc-700/60 dark:bg-card ${isRenaming ? '' : 'cursor-pointer hover:shadow-md hover:-translate-y-0.5'}`}
       onClick={() => { if (!renamingRef.current) router.push(`/editor/${resume.id}`); }}
     >
       {/* Title */}
@@ -70,7 +91,7 @@ export function ResumeListItem({ resume, onDelete, onDuplicate, onRename }: Resu
             ref={inputRef}
             value={renameValue}
             onChange={(e) => setRenameValue(e.target.value)}
-            onBlur={() => setTimeout(commitRename, 0)}
+            onBlur={handleBlur}
             onKeyDown={(e) => {
               if (e.key === 'Enter') { e.preventDefault(); commitRename(); }
               if (e.key === 'Escape') { setRenameValue(resume.title); setIsRenaming(false); renamingRef.current = false; }

@@ -9,6 +9,7 @@ import { EditableDate } from '../fields/editable-date';
 import { EditableRichText } from '../fields/editable-rich-text';
 import { EditableList } from '../fields/editable-list';
 import { FieldWrapper } from '../fields/field-wrapper';
+import { generateId } from '@/lib/utils';
 import type { ResumeSection, ProjectsContent, ProjectItem } from '@/types/resume';
 
 interface Props {
@@ -23,7 +24,7 @@ export function ProjectsSection({ section, onUpdate }: Props) {
 
   const addItem = () => {
     const newItem: ProjectItem = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       name: '',
       description: '',
       technologies: [],
@@ -56,6 +57,10 @@ export function ProjectsSection({ section, onUpdate }: Props) {
             <FieldWrapper>
               <EditableText label={t('projectName')} value={item.name} onChange={(v) => updateItem(index, { name: v })} />
               <EditableText label={t('website')} value={item.url || ''} onChange={(v) => updateItem(index, { url: v })} />
+            </FieldWrapper>
+            <FieldWrapper>
+              <EditableDate label={t('startDate')} value={item.startDate || ''} onChange={(v) => updateItem(index, { startDate: v })} />
+              <EditableDate label={t('endDate')} value={item.endDate || ''} onChange={(v) => updateItem(index, { endDate: v })} />
             </FieldWrapper>
             <EditableRichText label={t('description')} value={item.description} onChange={(v) => updateItem(index, { description: v })} />
             <EditableList label={t('technologies')} items={item.technologies} onChange={(v) => updateItem(index, { technologies: v })} />

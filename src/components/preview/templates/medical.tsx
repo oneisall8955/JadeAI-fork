@@ -1,6 +1,6 @@
 'use client';
 
-import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent } from '@/types/resume';
+import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 
 const TEAL_800 = '#115e59';
@@ -96,6 +96,13 @@ function MedicalSectionContent({ section }: { section: any }) {
               <span className="shrink-0 text-xs font-medium" style={{ color: TEAL_500 }}>{item.startDate} - {item.endDate}</span>
             </div>
             {item.gpa && <p className="text-sm text-gray-500">GPA: {item.gpa}</p>}
+            {item.highlights?.length > 0 && (
+              <ul className="mt-1.5 list-disc pl-4">
+                {item.highlights.map((h: string, i: number) => (
+                  <li key={i} className="text-sm text-gray-600">{h}</li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
       </div>
@@ -163,6 +170,24 @@ function MedicalSectionContent({ section }: { section: any }) {
           <div key={item.id}>
             <span className="text-sm font-bold" style={{ color: TEAL_800 }}>{item.language}</span>
             <span className="text-sm text-gray-600"> — {item.proficiency}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (section.type === 'github') {
+    const items = ((content as GitHubContent).items || []);
+    return (
+      <div className="space-y-3">
+        {items.map((item: any) => (
+          <div key={item.id} className="rounded-lg border p-3" style={{ borderColor: TEAL_500, backgroundColor: TEAL_50 }}>
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm font-bold" style={{ color: TEAL_800 }}>{item.name}</span>
+              <span className="text-xs font-medium" style={{ color: TEAL_500 }}>⭐ {item.stars?.toLocaleString()}</span>
+            </div>
+            {item.language && <span className="text-xs text-gray-400">{item.language}</span>}
+            {item.description && <p className="mt-1 text-sm text-gray-600">{item.description}</p>}
           </div>
         ))}
       </div>

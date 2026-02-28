@@ -3,6 +3,7 @@ import { generateText } from 'ai';
 import { getModel, extractAIConfig, AIConfigError } from '@/lib/ai/provider';
 import { resolveUser, getUserIdFromRequest } from '@/lib/auth/helpers';
 import { resumeRepository } from '@/lib/db/repositories/resume.repository';
+import { analysisRepository } from '@/lib/db/repositories/analysis.repository';
 import { grammarCheckInputSchema, grammarCheckOutputSchema } from '@/lib/ai/grammar-check-schema';
 import { extractJson } from '@/lib/ai/extract-json';
 
@@ -95,7 +96,21 @@ export async function POST(request: NextRequest) {
     console.log('[grammar-check] raw response:\n', result.text);
     const checkResult = extractJson(result.text, grammarCheckOutputSchema);
 
-    return NextResponse.json(checkResult);
+    // Persist to database
+    let historyId: string | undefined;
+    try {
+      const saved = await analysisRepository.createGrammarCheck({
+        resumeId,
+        result: checkResult,
+        score: checkResult.score,
+        issueCount: checkResult.issues.length,
+      });
+      historyId = saved?.id;
+    } catch (e) {
+      console.error('Failed to save grammar check history:', e);
+    }
+
+    return NextResponse.json({ ...checkResult, historyId });
   } catch (error) {
     if (error instanceof AIConfigError) {
       return NextResponse.json({ error: error.message }, { status: 401 });

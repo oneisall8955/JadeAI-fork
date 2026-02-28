@@ -68,13 +68,15 @@
 
 ### 导出与分享
 
-- **多格式导出** — PDF（Puppeteer + Chromium）、DOCX、HTML、TXT、JSON
+- **多格式导出** — PDF（Puppeteer + Chromium）、智能一页 PDF（自动适配单页）、DOCX、HTML、TXT、JSON
+- **JSON 导入** — 导入之前导出的 JSON 文件还原或创建简历；编辑器内覆盖当前简历，仪表盘创建新简历
 - **链接分享** — 基于 Token 的分享链接，支持密码保护
 - **浏览统计** — 追踪分享简历的查看次数
 
 ### 简历管理
 
 - **多简历仪表盘** — 网格和列表视图、搜索、排序（按日期、名称）
+- **JSON 导入创建** — 在仪表盘直接通过 JSON 文件创建新简历
 - **复制与重命名** — 快捷简历管理操作
 - **新手引导** — 交互式分步引导，帮助新用户快速上手
 
@@ -360,6 +362,12 @@ JadeAI 内置 **50 套专业设计模板**，覆盖多种风格和行业需求�
 4. 推送分支：`git push origin feat/your-feature`
 5. 提交 Pull Request
 
+## 交流群
+
+扫码加入QQ交流群，获取使用帮助与最新动态：
+
+<img src="images/chat-group.jpg" width="200" alt="QQ交流群二维码" />
+
 ## 常见问题
 
 <details>
@@ -389,6 +397,10 @@ JadeAI 不需要在服务端配置 AI API 密钥。每位用户在应用内的 *
 PDF 导出使用 Puppeteer Core + @sparticuz/chromium。50 套模板各有独立的服务端导出处理器，将简历渲染为高保真 PDF。同时支持 DOCX、HTML、TXT 和 JSON 格式导出。
 
 </details>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=twwch/JadeAI&type=date&legend=top-left)](https://www.star-history.com/#twwch/JadeAI&type=date&legend=top-left)
 
 ## 许可证
 

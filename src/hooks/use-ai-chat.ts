@@ -6,6 +6,7 @@ import { DefaultChatTransport } from 'ai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useResumeStore } from '@/stores/resume-store';
 import { useSettingsStore, getAIHeaders } from '@/stores/settings-store';
+import { generateId } from '@/lib/utils';
 
 interface UseAIChatOptions {
   resumeId: string;
@@ -15,10 +16,8 @@ interface UseAIChatOptions {
 }
 
 export function useAIChat({ resumeId, sessionId, initialMessages, selectedModel }: UseAIChatOptions) {
-  const fingerprint = typeof window !== 'undefined' ? localStorage.getItem('jade_fingerprint') : null;
   const [input, setInput] = useState('');
   const [localMessages, setLocalMessages] = useState<UIMessage[]>([]);
-  const { aiApiKey, aiBaseURL, aiModel } = useSettingsStore();
 
   const modelRef = useRef(selectedModel);
   modelRef.current = selectedModel;
@@ -31,9 +30,14 @@ export function useAIChat({ resumeId, sessionId, initialMessages, selectedModel 
       new DefaultChatTransport({
         api: '/api/ai/chat',
         body: () => ({ resumeId, model: modelRef.current, sessionId: sessionIdRef.current }),
-        headers: { ...(fingerprint ? { 'x-fingerprint': fingerprint } : {}), ...getAIHeaders() },
+        // headers must be a function — useChat never updates the transport ref,
+        // so a static object would freeze stale values from before store hydration.
+        headers: () => {
+          const fp = typeof window !== 'undefined' ? localStorage.getItem('jade_fingerprint') : null;
+          return { ...(fp ? { 'x-fingerprint': fp } : {}), ...getAIHeaders() };
+        },
       }),
-    [resumeId, fingerprint, aiApiKey, aiBaseURL, aiModel]
+    [resumeId]
   );
 
   const { messages, sendMessage, status, error, setMessages } = useChat({
@@ -53,8 +57,9 @@ export function useAIChat({ resumeId, sessionId, initialMessages, selectedModel 
       // Cancel any pending autosave to prevent overwriting server data
       if (store._saveTimeout) clearTimeout(store._saveTimeout);
 
+      const fp = typeof window !== 'undefined' ? localStorage.getItem('jade_fingerprint') : null;
       const res = await fetch(`/api/resume/${resumeId}`, {
-        headers: fingerprint ? { 'x-fingerprint': fingerprint } : {},
+        headers: fp ? { 'x-fingerprint': fp } : {},
       });
       if (res.ok) {
         const resume = await res.json();
@@ -63,7 +68,7 @@ export function useAIChat({ resumeId, sessionId, initialMessages, selectedModel 
     } catch (err) {
       console.error('Failed to reload resume after tool call:', err);
     }
-  }, [resumeId, fingerprint]);
+  }, [resumeId]);
 
   // Reload resume data when new tool results appear during streaming
   useEffect(() => {
@@ -106,12 +111,12 @@ export function useAIChat({ resumeId, sessionId, initialMessages, selectedModel 
     // Check if API key is configured
     if (!useSettingsStore.getState().aiApiKey) {
       const userMsg: UIMessage = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         role: 'user',
         parts: [{ type: 'text', text: input }],
       };
       const errorMsg: UIMessage = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         role: 'assistant',
         parts: [{ type: 'text', text: '__API_KEY_MISSING__' }],
       };

@@ -7,6 +7,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { esc, getPersonalInfo, visibleSections, buildHighlights, type ResumeWithSections, type Section } from '../utils';
 
@@ -22,7 +23,7 @@ function buildCardSectionContent(section: Section): string {
   }
   if (section.type === 'work_experience') {
     return `<div class="space-y-3">${((c as WorkExperienceContent).items || []).map((it: any) => `<div class="rounded-md bg-white p-3" style="border:1px solid #f4f4f5">
-      <div class="flex items-baseline justify-between"><div><span class="text-sm font-semibold" style="color:${PRIMARY}">${esc(it.position)}</span>${it.company ? `<span class="text-sm" style="color:${ACCENT}"> | ${esc(it.company)}</span>` : ''}</div><span class="shrink-0 text-xs text-zinc-400">${esc(it.startDate)} – ${it.current ? 'Present' : esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="text-sm font-semibold" style="color:${PRIMARY}">${esc(it.position)}</span>${it.company ? `<span class="text-sm" style="color:${ACCENT}"> | ${esc(it.company)}</span>` : ''}${it.location ? `<span class="text-sm text-zinc-400"> , ${esc(it.location)}</span>` : ''}</div><span class="shrink-0 text-xs text-zinc-400">${esc(it.startDate)} – ${it.current ? 'Present' : esc(it.endDate)}</span></div>
       ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-4">${buildHighlights(it.highlights, 'text-sm text-zinc-600')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -30,7 +31,7 @@ function buildCardSectionContent(section: Section): string {
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div class="rounded-md bg-white p-3" style="border:1px solid #f4f4f5">
       <div class="flex items-baseline justify-between"><span class="text-sm font-semibold" style="color:${PRIMARY}">${esc(it.institution)}</span><span class="shrink-0 text-xs text-zinc-400">${esc(it.startDate)} – ${esc(it.endDate)}</span></div>
-      <p class="text-sm text-zinc-600">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</p>
+      <p class="text-sm text-zinc-600">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}${it.location ? ` , ${esc(it.location)}` : ''}</p>
       ${it.gpa ? `<p class="text-xs text-zinc-500">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-4">${buildHighlights(it.highlights, 'text-sm text-zinc-600')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -58,6 +59,13 @@ function buildCardSectionContent(section: Section): string {
     return `<div class="flex flex-wrap gap-3">${((c as LanguagesContent).items || []).map((it: any) =>
       `<div class="flex items-center gap-2 rounded-full bg-white px-3 py-1" style="border:1px solid #e4e4e7"><span class="h-2 w-2 rounded-full" style="background-color:${ACCENT}"></span><span class="text-sm font-medium" style="color:${PRIMARY}">${esc(it.language)}</span><span class="text-xs text-zinc-400">${esc(it.proficiency)}</span></div>`
     ).join('')}</div>`;
+  }
+  if (section.type === 'github') {
+    return `<div class="space-y-3">${((c as GitHubContent).items || []).map((it: any) => `<div class="rounded-md bg-white p-3" style="border:1px solid #f4f4f5">
+      <div class="flex items-baseline justify-between"><span class="text-sm font-semibold" style="color:${ACCENT}">${esc(it.name)}</span><span class="text-xs text-zinc-400">&#11088; ${it.stars?.toLocaleString() ?? 0}</span></div>
+      ${it.language ? `<span class="text-xs text-zinc-500">${esc(it.language)}</span>` : ''}
+      ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
+    </div>`).join('')}</div>`;
   }
   if (section.type === 'custom') {
     return `<div class="space-y-2">${((c as CustomContent).items || []).map((it: any) => `<div class="rounded-md bg-white p-3" style="border:1px solid #f4f4f5">

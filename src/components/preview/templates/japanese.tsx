@@ -11,6 +11,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 
@@ -75,7 +76,7 @@ function JapaneseSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-normal" style={{ color: PRIMARY }}>{item.position}</h3>
               <span className="shrink-0 text-[10px] font-light" style={{ color: ACCENT }}>{item.startDate} &ndash; {item.current ? 'Present' : item.endDate}</span>
             </div>
-            {item.company && <p className="mt-0.5 text-xs font-light" style={{ color: ACCENT }}>{item.company}</p>}
+            {item.company && <p className="mt-0.5 text-xs font-light" style={{ color: ACCENT }}>{item.company}{item.location ? `, ${item.location}` : ''}</p>}
             {item.description && <p className="mt-2 text-sm font-light leading-relaxed" style={{ color: '#57534e' }}>{item.description}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-2 space-y-1">
@@ -103,7 +104,7 @@ function JapaneseSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-normal" style={{ color: PRIMARY }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</h3>
               <span className="shrink-0 text-[10px] font-light" style={{ color: ACCENT }}>{item.startDate} &ndash; {item.endDate}</span>
             </div>
-            {item.institution && <p className="mt-0.5 text-xs font-light" style={{ color: ACCENT }}>{item.institution}</p>}
+            {item.institution && <p className="mt-0.5 text-xs font-light" style={{ color: ACCENT }}>{item.institution}{item.location ? `, ${item.location}` : ''}</p>}
             {item.gpa && <p className="mt-1 text-xs font-light" style={{ color: ACCENT }}>GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-2 space-y-1">
@@ -188,6 +189,24 @@ function JapaneseSectionContent({ section }: { section: any }) {
           <div key={item.id} className="text-sm">
             <span className="font-normal" style={{ color: PRIMARY }}>{item.language}</span>
             <span className="font-light" style={{ color: ACCENT }}> &mdash; {item.proficiency}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (section.type === 'github') {
+    const items = (content as GitHubContent).items || [];
+    return (
+      <div className="space-y-5">
+        {items.map((item: any) => (
+          <div key={item.id}>
+            <div className="flex items-baseline justify-between">
+              <h3 className="text-sm font-normal" style={{ color: PRIMARY }}>{item.name}</h3>
+              <span className="shrink-0 text-[10px] font-light" style={{ color: ACCENT }}>&#11088; {item.stars?.toLocaleString()}</span>
+            </div>
+            {item.language && <p className="mt-0.5 text-xs font-light" style={{ color: ACCENT }}>{item.language}</p>}
+            {item.description && <p className="mt-1 text-sm font-light leading-relaxed" style={{ color: '#57534e' }}>{item.description}</p>}
           </div>
         ))}
       </div>

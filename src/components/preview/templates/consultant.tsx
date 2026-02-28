@@ -1,6 +1,6 @@
 'use client';
 
-import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent } from '@/types/resume';
+import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 
 const GRAY_700 = '#374151';
@@ -65,6 +65,7 @@ function ConsultantSectionContent({ section }: { section: any }) {
               <div>
                 <span className="text-sm font-bold" style={{ color: GRAY_700 }}>{item.position}</span>
                 {item.company && <span className="text-sm text-gray-500"> | {item.company}</span>}
+                {item.location && <span className="text-sm text-gray-400">, {item.location}</span>}
               </div>
               <span className="shrink-0 text-xs font-medium" style={{ color: BLUE_600 }}>{item.startDate} - {item.current ? 'Present' : item.endDate}</span>
             </div>
@@ -94,10 +95,21 @@ function ConsultantSectionContent({ section }: { section: any }) {
               <div>
                 <span className="text-sm font-bold" style={{ color: GRAY_700 }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
                 {item.institution && <span className="text-sm text-gray-500"> - {item.institution}</span>}
+                {item.location && <span className="text-sm text-gray-400">, {item.location}</span>}
               </div>
               <span className="shrink-0 text-xs font-medium" style={{ color: BLUE_600 }}>{item.startDate} - {item.endDate}</span>
             </div>
             {item.gpa && <p className="text-sm text-gray-500">GPA: {item.gpa}</p>}
+            {item.highlights?.length > 0 && (
+              <ul className="mt-1.5 space-y-0.5">
+                {item.highlights.map((h: string, i: number) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: BLUE_600 }} />
+                    {h}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
       </div>
@@ -168,6 +180,24 @@ function ConsultantSectionContent({ section }: { section: any }) {
           <div key={item.id}>
             <span className="text-sm font-bold" style={{ color: GRAY_700 }}>{item.language}</span>
             <span className="text-sm text-gray-500"> — {item.proficiency}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (section.type === 'github') {
+    const items = ((content as GitHubContent).items || []);
+    return (
+      <div className="space-y-3">
+        {items.map((item: any) => (
+          <div key={item.id}>
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm font-bold" style={{ color: GRAY_700 }}>{item.name}</span>
+              <span className="text-xs text-gray-400">⭐ {item.stars?.toLocaleString()}</span>
+            </div>
+            {item.language && <span className="text-xs text-gray-400">{item.language}</span>}
+            {item.description && <p className="mt-1 text-sm text-gray-600">{item.description}</p>}
           </div>
         ))}
       </div>

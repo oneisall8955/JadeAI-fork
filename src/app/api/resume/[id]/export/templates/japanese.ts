@@ -7,6 +7,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
 
@@ -24,7 +25,7 @@ function buildJapaneseSectionContent(section: Section): string {
         <h3 class="text-sm font-normal" style="color:${PRIMARY}">${esc(it.position)}</h3>
         <span class="shrink-0 text-[10px] font-light" style="color:${ACCENT}">${esc(it.startDate)} &ndash; ${it.current ? 'Present' : esc(it.endDate)}</span>
       </div>
-      ${it.company ? `<p class="mt-0.5 text-xs font-light" style="color:${ACCENT}">${esc(it.company)}</p>` : ''}
+      ${it.company ? `<p class="mt-0.5 text-xs font-light" style="color:${ACCENT}">${esc(it.company)}${it.location ? `, ${esc(it.location)}` : ''}</p>` : ''}
       ${it.description ? `<p class="mt-2 text-sm font-light leading-relaxed" style="color:#57534e">${esc(it.description)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-2 space-y-1">${it.highlights.filter(Boolean).map((h: string) => `<li class="flex items-start gap-3 text-sm font-light" style="color:#57534e"><span class="mt-2 inline-block h-px w-3 shrink-0" style="background-color:${ACCENT}"></span>${esc(h)}</li>`).join('')}</ul>` : ''}
       <div class="mt-4 h-px" style="background-color:${ACCENT};opacity:0.2"></div>
@@ -37,7 +38,7 @@ function buildJapaneseSectionContent(section: Section): string {
         <h3 class="text-sm font-normal" style="color:${PRIMARY}">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</h3>
         <span class="shrink-0 text-[10px] font-light" style="color:${ACCENT}">${esc(it.startDate)} &ndash; ${esc(it.endDate)}</span>
       </div>
-      ${it.institution ? `<p class="mt-0.5 text-xs font-light" style="color:${ACCENT}">${esc(it.institution)}</p>` : ''}
+      ${it.institution ? `<p class="mt-0.5 text-xs font-light" style="color:${ACCENT}">${esc(it.institution)}${it.location ? `, ${esc(it.location)}` : ''}</p>` : ''}
       ${it.gpa ? `<p class="mt-1 text-xs font-light" style="color:${ACCENT}">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-2 space-y-1">${it.highlights.filter(Boolean).map((h: string) => `<li class="flex items-start gap-3 text-sm font-light" style="color:#57534e"><span class="mt-2 inline-block h-px w-3 shrink-0" style="background-color:${ACCENT}"></span>${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -71,6 +72,17 @@ function buildJapaneseSectionContent(section: Section): string {
     return `<div class="flex flex-wrap gap-x-8 gap-y-2">${((c as LanguagesContent).items || []).map((it: any) =>
       `<div class="text-sm"><span class="font-normal" style="color:${PRIMARY}">${esc(it.language)}</span><span class="font-light" style="color:${ACCENT}"> &mdash; ${esc(it.proficiency)}</span></div>`
     ).join('')}</div>`;
+  }
+
+  if (section.type === 'github') {
+    return `<div class="space-y-5">${((c as GitHubContent).items || []).map((it: any) => `<div>
+      <div class="flex items-baseline justify-between">
+        <h3 class="text-sm font-normal" style="color:${PRIMARY}">${esc(it.name)}</h3>
+        <span class="shrink-0 text-[10px] font-light" style="color:${ACCENT}">&#11088; ${it.stars?.toLocaleString() ?? 0}</span>
+      </div>
+      ${it.language ? `<p class="mt-0.5 text-xs font-light" style="color:${ACCENT}">${esc(it.language)}</p>` : ''}
+      ${it.description ? `<p class="mt-1 text-sm font-light leading-relaxed" style="color:#57534e">${esc(it.description)}</p>` : ''}
+    </div>`).join('')}</div>`;
   }
 
   if (section.type === 'custom') {

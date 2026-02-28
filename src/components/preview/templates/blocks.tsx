@@ -11,6 +11,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 
@@ -94,7 +95,7 @@ function BlocksSectionContent({ section }: { section: any }) {
                 {item.startDate} - {item.current ? 'Present' : item.endDate}
               </span>
             </div>
-            {item.company && <p className="text-sm" style={{ color: ACCENT }}>{item.company}</p>}
+            {item.company && <p className="text-sm" style={{ color: ACCENT }}>{item.company}{item.location ? ` , ${item.location}` : ''}</p>}
             {item.description && <p className="mt-1 text-sm" style={{ color: '#787774' }}>{item.description}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
@@ -119,7 +120,7 @@ function BlocksSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.institution}</h3>
               <span className="text-xs" style={{ color: '#9b9a97' }}>{item.startDate} - {item.endDate}</span>
             </div>
-            <p className="text-sm" style={{ color: '#787774' }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
+            <p className="text-sm" style={{ color: '#787774' }}>{item.degree}{item.field ? ` in ${item.field}` : ''}{item.location ? ` , ${item.location}` : ''}</p>
             {item.gpa && <p className="text-xs" style={{ color: '#9b9a97' }}>GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
@@ -193,6 +194,24 @@ function BlocksSectionContent({ section }: { section: any }) {
                 ))}
               </ul>
             )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (section.type === 'github') {
+    const items = (content as GitHubContent).items || [];
+    return (
+      <div className="space-y-3">
+        {items.map((item: any) => (
+          <div key={item.id} className="rounded-md border p-3" style={{ borderColor: '#e3e2de' }}>
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm font-semibold" style={{ color: ACCENT }}>{item.name}</span>
+              <span className="text-xs" style={{ color: '#9b9a97' }}>⭐ {item.stars?.toLocaleString()}</span>
+            </div>
+            {item.language && <span className="text-xs" style={{ color: '#9b9a97' }}>{item.language}</span>}
+            {item.description && <p className="mt-1 text-sm" style={{ color: '#787774' }}>{item.description}</p>}
           </div>
         ))}
       </div>

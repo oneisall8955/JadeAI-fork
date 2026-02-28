@@ -7,6 +7,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
 
@@ -63,7 +64,7 @@ function buildCoderMainContent(section: Section): string {
 
   if (section.type === 'work_experience') {
     return `<div class="space-y-4">${((c as WorkExperienceContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${DARK}">${esc(it.position)}</span>${it.company ? `<span class="text-sm" style="color:${BLUE}"> @ ${esc(it.company)}</span>` : ''}</div><span class="shrink-0 rounded px-2 py-0.5 text-[10px] font-medium" style="background-color:#f6f8fa;color:#57606a">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${DARK}">${esc(it.position)}</span>${it.company ? `<span class="text-sm" style="color:${BLUE}"> @ ${esc(it.company)}</span>` : ''}${it.location ? `<span class="text-xs text-zinc-400">, ${esc(it.location)}</span>` : ''}</div><span class="shrink-0 rounded px-2 py-0.5 text-[10px] font-medium" style="background-color:#f6f8fa;color:#57606a">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
       ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 space-y-0.5">${buildCoderHighlights(it.highlights)}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -72,7 +73,7 @@ function buildCoderMainContent(section: Section): string {
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div>
       <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${DARK}">${esc(it.institution)}</h3><span class="text-xs text-zinc-400">${esc(it.startDate)} - ${esc(it.endDate)}</span></div>
-      <p class="text-sm text-zinc-600">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</p>
+      <p class="text-sm text-zinc-600">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}${it.location ? `<span class="text-zinc-400">, ${esc(it.location)}</span>` : ''}</p>
       ${it.gpa ? `<p class="text-xs text-zinc-500">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 space-y-0.5">${buildCoderHighlights(it.highlights)}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -84,6 +85,14 @@ function buildCoderMainContent(section: Section): string {
       ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
       ${it.technologies?.length ? `<div class="mt-1 flex flex-wrap gap-1">${it.technologies.map((t: string) => `<span class="rounded-sm px-1.5 py-0.5 text-[10px] font-medium" style="background-color:#f6f8fa;color:#57606a;border:1px solid #d0d7de">${esc(t)}</span>`).join('')}</div>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 space-y-0.5">${buildCoderHighlights(it.highlights)}</ul>` : ''}
+    </div>`).join('')}</div>`;
+  }
+
+  if (section.type === 'github') {
+    return `<div class="space-y-3">${((c as GitHubContent).items || []).map((it: any) => `<div>
+      <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${BLUE}">${esc(it.name)}</h3><span class="text-xs text-zinc-400">\u2B50 ${it.stars?.toLocaleString() ?? 0}</span></div>
+      ${it.language ? `<span class="rounded-sm px-1.5 py-0.5 text-[10px] font-medium" style="background-color:#f6f8fa;color:#57606a;border:1px solid #d0d7de">${esc(it.language)}</span>` : ''}
+      ${it.description ? `<p class="mt-1 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
 

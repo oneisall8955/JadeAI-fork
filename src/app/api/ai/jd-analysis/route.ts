@@ -3,6 +3,7 @@ import { generateText } from 'ai';
 import { getModel, extractAIConfig, AIConfigError } from '@/lib/ai/provider';
 import { resolveUser, getUserIdFromRequest } from '@/lib/auth/helpers';
 import { resumeRepository } from '@/lib/db/repositories/resume.repository';
+import { analysisRepository } from '@/lib/db/repositories/analysis.repository';
 import { jdAnalysisInputSchema, jdAnalysisOutputSchema } from '@/lib/ai/jd-analysis-schema';
 import { extractJson } from '@/lib/ai/extract-json';
 
@@ -66,7 +67,22 @@ export async function POST(request: NextRequest) {
 
     const analysisData = extractJson(result.text, jdAnalysisOutputSchema);
 
-    return NextResponse.json(analysisData);
+    // Persist to database
+    let historyId: string | undefined;
+    try {
+      const saved = await analysisRepository.createJdAnalysis({
+        resumeId,
+        jobDescription,
+        result: analysisData,
+        overallScore: analysisData.overallScore,
+        atsScore: analysisData.atsScore,
+      });
+      historyId = saved?.id;
+    } catch (e) {
+      console.error('Failed to save JD analysis history:', e);
+    }
+
+    return NextResponse.json({ ...analysisData, historyId });
   } catch (error) {
     if (error instanceof AIConfigError) {
       return NextResponse.json({ error: error.message }, { status: 401 });

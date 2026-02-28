@@ -11,6 +11,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 
@@ -103,7 +104,7 @@ function MagazineSectionContent({ section }: { section: any }) {
                 {item.startDate} - {item.current ? 'Present' : item.endDate}
               </span>
             </div>
-            {item.company && <p className="text-sm font-medium italic" style={{ color: SECONDARY }}>{item.company}</p>}
+            {item.company && <p className="text-sm font-medium italic" style={{ color: SECONDARY }}>{item.company}{item.location ? `, ${item.location}` : ''}</p>}
             {item.description && <p className="mt-1 text-sm" style={{ color: SECONDARY }}>{item.description}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 space-y-0.5">
@@ -131,7 +132,7 @@ function MagazineSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.institution}</h3>
               <span className="text-xs" style={{ color: SECONDARY }}>{item.startDate} - {item.endDate}</span>
             </div>
-            <p className="text-sm" style={{ color: SECONDARY }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
+            <p className="text-sm" style={{ color: SECONDARY }}>{item.degree}{item.field ? ` in ${item.field}` : ''}{item.location ? ` — ${item.location}` : ''}</p>
             {item.gpa && <p className="text-xs" style={{ color: SECONDARY }}>GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 space-y-0.5">
@@ -222,6 +223,24 @@ function MagazineSectionContent({ section }: { section: any }) {
           <div key={item.id} className="flex items-baseline gap-2">
             <span className="text-sm font-bold" style={{ color: PRIMARY }}>{item.language}</span>
             <span className="text-xs uppercase tracking-wider" style={{ color: ACCENT }}>{item.proficiency}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (section.type === 'github') {
+    const items = (content as GitHubContent).items || [];
+    return (
+      <div className="space-y-3">
+        {items.map((item: any) => (
+          <div key={item.id} className="border-l-2 pl-4" style={{ borderColor: ACCENT }}>
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm font-bold" style={{ color: PRIMARY }}>{item.name}</span>
+              <span className="text-xs" style={{ color: SECONDARY }}>{'\u2B50'} {item.stars?.toLocaleString()}</span>
+            </div>
+            {item.language && <span className="text-xs" style={{ color: ACCENT }}>{item.language}</span>}
+            {item.description && <p className="mt-1 text-sm" style={{ color: SECONDARY }}>{item.description}</p>}
           </div>
         ))}
       </div>

@@ -7,6 +7,7 @@ import type {
   CertificationsContent,
   LanguagesContent,
   CustomContent,
+  GitHubContent,
 } from '@/types/resume';
 import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
 
@@ -22,7 +23,7 @@ function buildConsultantSectionContent(section: Section): string {
 
   if (section.type === 'work_experience') {
     return `<div class="space-y-4">${((c as WorkExperienceContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${GRAY_700}">${esc(it.position)}</span>${it.company ? `<span class="text-sm text-gray-500"> | ${esc(it.company)}</span>` : ''}</div><span class="shrink-0 text-xs font-medium" style="color:${BLUE_600}">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${GRAY_700}">${esc(it.position)}</span>${it.company ? `<span class="text-sm text-gray-500"> | ${esc(it.company)}</span>` : ''}${it.location ? `<span class="text-sm text-gray-400">, ${esc(it.location)}</span>` : ''}</div><span class="shrink-0 text-xs font-medium" style="color:${BLUE_600}">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
       ${it.description ? `<p class="mt-1 text-sm text-gray-600">${esc(it.description)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1.5 space-y-0.5">${it.highlights.map((h: string) => `<li class="flex items-start gap-2 text-sm text-gray-600"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background-color:${BLUE_600}"></span>${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -30,8 +31,9 @@ function buildConsultantSectionContent(section: Section): string {
 
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${GRAY_700}">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</span>${it.institution ? `<span class="text-sm text-gray-500"> - ${esc(it.institution)}</span>` : ''}</div><span class="shrink-0 text-xs font-medium" style="color:${BLUE_600}">${esc(it.startDate)} - ${esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="text-sm font-bold" style="color:${GRAY_700}">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</span>${it.institution ? `<span class="text-sm text-gray-500"> - ${esc(it.institution)}</span>` : ''}${it.location ? `<span class="text-sm text-gray-400">, ${esc(it.location)}</span>` : ''}</div><span class="shrink-0 text-xs font-medium" style="color:${BLUE_600}">${esc(it.startDate)} - ${esc(it.endDate)}</span></div>
       ${it.gpa ? `<p class="text-sm text-gray-500">GPA: ${esc(it.gpa)}</p>` : ''}
+      ${it.highlights?.length ? `<ul class="mt-1.5 space-y-0.5">${it.highlights.map((h: string) => `<li class="flex items-start gap-2 text-sm text-gray-600"><span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background-color:${BLUE_600}"></span>${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
   }
 
@@ -60,6 +62,14 @@ function buildConsultantSectionContent(section: Section): string {
     return `<div class="space-y-1.5">${((c as LanguagesContent).items || []).map((it: any) =>
       `<div><span class="text-sm font-bold" style="color:${GRAY_700}">${esc(it.language)}</span><span class="text-sm text-gray-500"> — ${esc(it.proficiency)}</span></div>`
     ).join('')}</div>`;
+  }
+
+  if (section.type === 'github') {
+    return `<div class="space-y-3">${((c as GitHubContent).items || []).map((it: any) => `<div>
+      <div class="flex items-baseline justify-between"><span class="text-sm font-bold" style="color:${GRAY_700}">${esc(it.name)}</span><span class="text-xs text-gray-400">⭐ ${it.stars?.toLocaleString() ?? 0}</span></div>
+      ${it.language ? `<span class="text-xs text-gray-400">${esc(it.language)}</span>` : ''}
+      ${it.description ? `<p class="mt-1 text-sm text-gray-600">${esc(it.description)}</p>` : ''}
+    </div>`).join('')}</div>`;
   }
 
   if (section.type === 'custom') {

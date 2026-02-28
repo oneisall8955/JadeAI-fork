@@ -70,3 +70,22 @@ export const chatMessages = sqliteTable('chat_messages', {
   metadata: text('metadata', { mode: 'json' }).default('{}'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 });
+
+export const jdAnalyses = sqliteTable('jd_analyses', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  resumeId: text('resume_id').notNull().references(() => resumes.id, { onDelete: 'cascade' }),
+  jobDescription: text('job_description').notNull(),
+  result: text('result', { mode: 'json' }).notNull(),
+  overallScore: integer('overall_score').notNull(),
+  atsScore: integer('ats_score').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+});
+
+export const grammarChecks = sqliteTable('grammar_checks', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  resumeId: text('resume_id').notNull().references(() => resumes.id, { onDelete: 'cascade' }),
+  result: text('result', { mode: 'json' }).notNull(),
+  score: integer('score').notNull(),
+  issueCount: integer('issue_count').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+});
