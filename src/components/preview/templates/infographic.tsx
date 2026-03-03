@@ -1,6 +1,7 @@
 'use client';
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const COLORS = ['#3b82f6', '#ef4444', '#f59e0b', '#10b981', '#8b5cf6', '#ec4899'];
@@ -15,7 +16,7 @@ export function InfographicTemplate({ resume }: { resume: Resume }) {
       <div className="relative overflow-hidden px-8 py-8" style={{ background: 'linear-gradient(135deg, #1e40af, #7c3aed)' }}>
         <div className="relative flex items-center gap-5">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-20 w-20 shrink-0 rounded-full border-3 border-white/30 object-cover" />
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} className="shrink-0" style={{ border: '3px solid rgba(255,255,255,0.3)' }} />
           )}
           <div>
             <h1 className="text-3xl font-bold text-white">{pi.fullName || 'Your Name'}</h1>
@@ -41,7 +42,7 @@ export function InfographicTemplate({ resume }: { resume: Resume }) {
                 </span>
                 <span style={{ color: COLORS[idx % COLORS.length] }}>{section.title}</span>
               </h2>
-              <InfographicSectionContent section={section} colorIndex={idx} />
+              <InfographicSectionContent section={section} colorIndex={idx} resume={resume} />
             </div>
           ))}
       </div>
@@ -49,7 +50,7 @@ export function InfographicTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function InfographicSectionContent({ section, colorIndex }: { section: any; colorIndex: number }) {
+function InfographicSectionContent({ section, colorIndex, resume }: { section: any; colorIndex: number; resume: Resume }) {
   const content = section.content;
   const color = COLORS[colorIndex % COLORS.length];
 
@@ -65,11 +66,20 @@ function InfographicSectionContent({ section, colorIndex }: { section: any; colo
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold text-zinc-800">{item.position}</h3>
               <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium text-white" style={{ background: color }}>
-                {item.startDate} – {item.current ? 'Present' : item.endDate}
+                {item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm" style={{ color }}>{item.company}</p>}
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1.5 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full px-2 py-0.5 text-[10px] font-medium text-white" style={{ background: color, opacity: 0.8 }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
@@ -91,7 +101,7 @@ function InfographicSectionContent({ section, colorIndex }: { section: any; colo
                 <span className="text-sm font-bold text-zinc-800">{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
                 {item.institution && <span className="text-sm text-zinc-500"> — {item.institution}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.gpa && <p className="text-sm text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
@@ -134,7 +144,7 @@ function InfographicSectionContent({ section, colorIndex }: { section: any; colo
               <h3 className="text-sm font-bold" style={{ color }}>{item.name}</h3>
               {item.startDate && (
                 <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium text-white" style={{ background: color }}>
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const BLUE_GRAY = '#475569';
@@ -11,11 +12,11 @@ export function TimelineTemplate({ resume }: { resume: Resume }) {
   const pi = (personalInfo?.content || {}) as PersonalInfoContent;
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div className="mb-6 text-center">
         {pi.avatar && (
-          <img src={pi.avatar} alt="" className="mx-auto mb-3 h-18 w-18 rounded-full border-2 object-cover" style={{ borderColor: ACCENT }} />
+          <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={72} className="mx-auto mb-3" style={{ border: `2px solid ${ACCENT}` }} />
         )}
         <h1 className="text-2xl font-bold" style={{ color: BLUE_GRAY }}>{pi.fullName || 'Your Name'}</h1>
         {pi.jobTitle && <p className="mt-0.5 text-base" style={{ color: ACCENT }}>{pi.jobTitle}</p>}
@@ -35,14 +36,14 @@ export function TimelineTemplate({ resume }: { resume: Resume }) {
             <h2 className="mb-3 text-sm font-bold uppercase tracking-wider" style={{ color: BLUE_GRAY }}>
               {section.title}
             </h2>
-            <TimelineSectionContent section={section} />
+            <TimelineSectionContent section={section} resume={resume} />
           </div>
         ))}
     </div>
   );
 }
 
-function TimelineSectionContent({ section }: { section: any }) {
+function TimelineSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -62,10 +63,19 @@ function TimelineSectionContent({ section }: { section: any }) {
                 {item.company && <span className="text-sm text-zinc-500"> | {item.company}</span>}
               </div>
               <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ background: '#eff6ff', color: ACCENT }}>
-                {item.startDate} – {item.current ? 'Present' : item.endDate}
+                {item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ background: '#eff6ff', color: ACCENT }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
@@ -88,7 +98,7 @@ function TimelineSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold" style={{ color: BLUE_GRAY }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
                 {item.institution && <span className="text-sm text-zinc-500"> — {item.institution}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.gpa && <p className="text-sm text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
@@ -126,7 +136,7 @@ function TimelineSectionContent({ section }: { section: any }) {
               <span className="text-sm font-bold" style={{ color: BLUE_GRAY }}>{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ background: '#eff6ff', color: ACCENT }}>
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

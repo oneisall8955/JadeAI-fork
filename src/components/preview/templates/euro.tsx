@@ -1,6 +1,7 @@
 'use client';
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const BLUE = '#1e40af';
@@ -10,7 +11,7 @@ export function EuroTemplate({ resume }: { resume: Resume }) {
   const pi = (personalInfo?.content || {}) as PersonalInfoContent;
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header - EU CV style with photo on right */}
       <div className="mb-6 flex items-start gap-6">
         <div className="flex-1">
@@ -24,7 +25,7 @@ export function EuroTemplate({ resume }: { resume: Resume }) {
           </div>
         </div>
         {pi.avatar && (
-          <img src={pi.avatar} alt="" className="h-28 w-22 shrink-0 rounded border-2 object-cover" style={{ borderColor: BLUE }} />
+          <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={88} className="shrink-0 border-2" style={{ borderColor: BLUE }} />
         )}
       </div>
 
@@ -40,7 +41,7 @@ export function EuroTemplate({ resume }: { resume: Resume }) {
                 <h2 className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>{section.title}</h2>
               </div>
               <div className="flex-1 border-l-2 pl-4" style={{ borderColor: '#dbeafe' }}>
-                <EuroSectionContent section={section} />
+                <EuroSectionContent section={section} resume={resume} />
               </div>
             </div>
           ))}
@@ -49,7 +50,7 @@ export function EuroTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function EuroSectionContent({ section }: { section: any }) {
+function EuroSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -66,9 +67,10 @@ function EuroSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold text-zinc-800">{item.position}</span>
                 {item.company && <span className="text-sm text-zinc-500"> — {item.company}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && <p className="mt-0.5 text-xs text-zinc-400">{resume.language === 'zh' ? '技术栈' : 'Tech'}: {item.technologies.join(', ')}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
@@ -90,7 +92,7 @@ function EuroSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold text-zinc-800">{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
                 {item.institution && <span className="text-sm text-zinc-500"> — {item.institution}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.gpa && <p className="text-sm text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
@@ -125,10 +127,10 @@ function EuroSectionContent({ section }: { section: any }) {
           <div key={item.id}>
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-bold text-zinc-800">{item.name}</span>
-              {item.startDate && <span className="shrink-0 text-xs text-zinc-400">{item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}</span>}
+              {item.startDate && <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>}
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
-            {item.technologies?.length > 0 && <p className="mt-0.5 text-xs text-zinc-400">Tech: {item.technologies.join(', ')}</p>}
+            {item.technologies?.length > 0 && <p className="mt-0.5 text-xs text-zinc-400">{resume.language === 'zh' ? '技术栈' : 'Tech'}: {item.technologies.join(', ')}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}

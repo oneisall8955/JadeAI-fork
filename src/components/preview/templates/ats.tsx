@@ -13,6 +13,7 @@ import type {
   GitHubContent,
   CustomContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 export function AtsTemplate({ resume }: { resume: Resume }) {
@@ -22,13 +23,21 @@ export function AtsTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website, pi.linkedin, pi.github].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
-      {/* Header — plain, no graphics */}
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
+      {/* Header — plain, minimal graphics */}
       <div className="mb-4 text-center">
+        {pi.avatar && (
+          <AvatarImage
+            src={pi.avatar}
+            size={64}
+            avatarStyle={resume.themeConfig?.avatarStyle}
+            wrapperClassName="mx-auto mb-2 overflow-hidden"
+          />
+        )}
         <h1 className="text-2xl font-bold text-black">{pi.fullName || 'Your Name'}</h1>
-        {pi.jobTitle && <p className="mt-0.5 text-base text-zinc-700">{pi.jobTitle}</p>}
+        {pi.jobTitle && <p className="mt-0.5 text-base text-zinc-800">{pi.jobTitle}</p>}
         {contacts.length > 0 && (
-          <p className="mt-1 text-sm text-zinc-600">
+          <p className="mt-1 text-sm text-zinc-700">
             {contacts.join(' | ')}
           </p>
         )}
@@ -44,14 +53,14 @@ export function AtsTemplate({ resume }: { resume: Resume }) {
             <h2 className="mb-1.5 border-b border-black pb-0.5 text-base font-bold uppercase text-black">
               {section.title}
             </h2>
-            <AtsSectionContent section={section} />
+            <AtsSectionContent section={section} resume={resume} />
           </div>
         ))}
     </div>
   );
 }
 
-function AtsSectionContent({ section }: { section: any }) {
+function AtsSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -70,9 +79,12 @@ function AtsSectionContent({ section }: { section: any }) {
                 {item.company && <span className="text-sm text-zinc-700">, {item.company}</span>}
                 {item.location && <span className="text-sm text-zinc-500">, {item.location}</span>}
               </div>
-              <span className="shrink-0 text-sm text-zinc-600">{item.startDate} - {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-sm text-zinc-600">{item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-0.5 text-sm text-zinc-700">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="text-sm text-zinc-600">{resume.language === 'zh' ? '技术栈' : 'Technologies'}: {item.technologies.join(', ')}</p>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-5">
                 {item.highlights.map((h: string, i: number) => (
@@ -98,7 +110,7 @@ function AtsSectionContent({ section }: { section: any }) {
                 {item.institution && <span className="text-sm text-zinc-700">, {item.institution}</span>}
                 {item.location && <span className="text-sm text-zinc-500">, {item.location}</span>}
               </div>
-              <span className="shrink-0 text-sm text-zinc-600">{item.startDate} - {item.endDate}</span>
+              <span className="shrink-0 text-sm text-zinc-600">{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.gpa && <p className="text-sm text-zinc-600">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
@@ -138,13 +150,13 @@ function AtsSectionContent({ section }: { section: any }) {
               <span className="text-sm font-bold text-black">{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-sm text-zinc-600">
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>
             {item.description && <p className="mt-0.5 text-sm text-zinc-700">{item.description}</p>}
             {item.technologies?.length > 0 && (
-              <p className="text-sm text-zinc-600">Technologies: {item.technologies.join(', ')}</p>
+              <p className="text-sm text-zinc-600">{resume.language === 'zh' ? '技术栈' : 'Technologies'}: {item.technologies.join(', ')}</p>
             )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-5">

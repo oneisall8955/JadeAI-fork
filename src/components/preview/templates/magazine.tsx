@@ -13,11 +13,12 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#1a1a1a';
 const ACCENT = '#dc2626';
-const SECONDARY = '#78716c';
+const SECONDARY = '#44403c';
 
 export function MagazineTemplate({ resume }: { resume: Resume }) {
   const personalInfo = resume.sections.find((s) => s.type === 'personal_info');
@@ -26,12 +27,12 @@ export function MagazineTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website, pi.linkedin, pi.github].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Georgia, serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Georgia, serif' }}>
       {/* Header */}
       <div className="mb-6 border-b-2 pb-4" style={{ borderColor: ACCENT }}>
         <div className="flex items-end gap-4">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-20 w-20 shrink-0 rounded object-cover grayscale" />
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} className="shrink-0" />
           )}
           <div>
             <h1 className="text-4xl font-black uppercase tracking-tight" style={{ color: PRIMARY, letterSpacing: '-0.02em' }}>
@@ -68,14 +69,14 @@ export function MagazineTemplate({ resume }: { resume: Resume }) {
               </h2>
               <div className="h-px flex-1" style={{ backgroundColor: '#e5e5e5' }} />
             </div>
-            <MagazineSectionContent section={section} />
+            <MagazineSectionContent section={section} resume={resume} />
           </div>
         ))}
     </div>
   );
 }
 
-function MagazineSectionContent({ section }: { section: any }) {
+function MagazineSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -101,11 +102,16 @@ function MagazineSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.position}</h3>
               <span className="shrink-0 text-xs font-medium" style={{ color: ACCENT }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm font-medium italic" style={{ color: SECONDARY }}>{item.company}{item.location ? `, ${item.location}` : ''}</p>}
             {item.description && <p className="mt-1 text-sm" style={{ color: SECONDARY }}>{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="mt-1 text-xs italic" style={{ color: ACCENT }}>
+                {item.technologies.join(', ')}
+              </p>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 space-y-0.5">
                 {item.highlights.map((h: string, i: number) => (
@@ -130,7 +136,7 @@ function MagazineSectionContent({ section }: { section: any }) {
           <div key={item.id} className="border-l-2 pl-4" style={{ borderColor: ACCENT }}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.institution}</h3>
-              <span className="text-xs" style={{ color: SECONDARY }}>{item.startDate} - {item.endDate}</span>
+              <span className="text-xs" style={{ color: SECONDARY }}>{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm" style={{ color: SECONDARY }}>{item.degree}{item.field ? ` in ${item.field}` : ''}{item.location ? ` — ${item.location}` : ''}</p>
             {item.gpa && <p className="text-xs" style={{ color: SECONDARY }}>GPA: {item.gpa}</p>}
@@ -174,7 +180,7 @@ function MagazineSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.name}</h3>
               {item.startDate && (
                 <span className="text-xs" style={{ color: SECONDARY }}>
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

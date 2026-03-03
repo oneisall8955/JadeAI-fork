@@ -14,6 +14,7 @@ import type {
   GitHubContent,
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
+import { AvatarImage } from '../avatar-image';
 
 export function ProfessionalTemplate({ resume }: { resume: Resume }) {
   const personalInfo = resume.sections.find((s) => s.type === 'personal_info');
@@ -22,12 +23,12 @@ export function ProfessionalTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website, pi.linkedin, pi.github].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
       {/* Header */}
       <div className="mb-6 text-center">
         <div className="flex items-center justify-center gap-4">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-18 w-18 shrink-0 rounded-full border-2 object-cover" style={{ borderColor: '#1e3a5f' }} />
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={72} className="shrink-0" style={{ border: '2px solid #1e3a5f' }} />
           )}
           <div>
             <h1 className="text-3xl font-bold tracking-wide" style={{ color: '#1e3a5f' }}>
@@ -64,14 +65,14 @@ export function ProfessionalTemplate({ resume }: { resume: Resume }) {
               </h2>
               <div className="h-[1px] flex-1 bg-zinc-200" />
             </div>
-            <ProfessionalSectionContent section={section} />
+            <ProfessionalSectionContent section={section} lang={resume.language} />
           </div>
         ))}
     </div>
   );
 }
 
-function ProfessionalSectionContent({ section }: { section: any }) {
+function ProfessionalSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -90,9 +91,12 @@ function ProfessionalSectionContent({ section }: { section: any }) {
                 {item.company && <span className="text-sm text-zinc-600"> — {item.company}</span>}
                 {item.location && <span className="text-sm text-zinc-400"> ({item.location})</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400 italic">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400 italic">{item.startDate} – {item.endDate || (item.current ? (lang === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="mt-0.5 text-xs text-zinc-400">{lang === 'zh' ? '技术栈' : 'Tech'}: {item.technologies.join(', ')}</p>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-5">
                 {item.highlights.map((h: string, i: number) => (
@@ -117,7 +121,7 @@ function ProfessionalSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold" style={{ color: '#1e3a5f' }}>{item.institution}</span>
                 {item.location && <span className="text-sm text-zinc-400"> ({item.location})</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400 italic">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400 italic">{item.startDate} – {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -158,13 +162,13 @@ function ProfessionalSectionContent({ section }: { section: any }) {
               <span className="text-sm font-bold" style={{ color: '#1e3a5f' }}>{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400 italic">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (lang === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
             {item.technologies?.length > 0 && (
-              <p className="mt-0.5 text-xs text-zinc-400">Tech: {item.technologies.join(', ')}</p>
+              <p className="mt-0.5 text-xs text-zinc-400">{lang === 'zh' ? '技术栈' : 'Tech'}: {item.technologies.join(', ')}</p>
             )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-5">

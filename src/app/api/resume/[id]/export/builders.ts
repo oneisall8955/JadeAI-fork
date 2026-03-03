@@ -149,13 +149,18 @@ export function generateHtml(resume: ResumeWithSections, forPdf = false): string
   if (isFullDark) bodyBg = fullDarkBg;
   else if (isSidebarDark) bodyBg = `linear-gradient(90deg, ${sidebarDark.bg} ${sidebarDark.width}, white ${sidebarDark.width})`;
 
+  // Convert theme margin (px) → mm for @page (approx 1mm ≈ 3.78px at 96dpi)
+  const pxToMm = (px: number) => Math.round((px / 3.78) * 10) / 10;
+  const pageMarginTop = pxToMm(theme.margin.top);
+  const pageMarginBottom = pxToMm(theme.margin.bottom);
+
   const pdfOverrides = forPdf
     ? `/* Page margins */
        ${isFullDark || isSidebarDark
          ? `@page { margin: 0; }`
          : isBackground
-           ? `@page { margin: 12mm 0; } @page :first { margin: 0; }`
-           : `@page { margin: 12mm 0; }`}
+           ? `@page { margin: ${pageMarginTop}mm 0 ${pageMarginBottom}mm 0; } @page :first { margin: 0; }`
+           : `@page { margin: ${pageMarginTop}mm 0 ${pageMarginBottom}mm 0; }`}
        html, body { background: ${bodyBg} !important; padding: 0 !important; margin: 0 !important; display: block !important; min-height: 100%; }
        .resume-export { width: 100%; }
        .resume-export > div { box-shadow: none !important; ${isSidebarDark ? 'min-height: auto !important; max-width: none !important; width: 100% !important; background: transparent !important; overflow: visible !important;' : isBackground ? 'max-width: none !important; width: 100% !important;' : 'background: white !important;'} }
@@ -203,10 +208,20 @@ export function generateHtml(resume: ResumeWithSections, forPdf = false): string
     @media print { body { padding: 0 !important; background: white !important; } .resume-export > div { box-shadow: none !important; } }
     ${themeCSS}
     ${pdfOverrides}
+    /* Avatar style: oneInch → portrait rectangle (5:7) with small radius */
+    .resume-export[data-avatar-style="oneInch"] img[class*="object-cover"] {
+      border-radius: 4px !important;
+      aspect-ratio: 5 / 7 !important;
+      height: auto !important;
+    }
+    .resume-export[data-avatar-style="oneInch"] div:has(> img[class*="object-cover"]) {
+      border-radius: 4px !important;
+      height: auto !important;
+    }
   </style>
 </head>
 <body>
-  <div class="resume-export">
+  <div class="resume-export" data-avatar-style="${esc((resume as any).themeConfig?.avatarStyle || 'oneInch')}">
     ${bodyHtml}
   </div>
 </body>

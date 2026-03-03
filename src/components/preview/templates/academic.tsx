@@ -13,6 +13,7 @@ import type {
   GitHubContent,
   CustomContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 export function AcademicTemplate({ resume }: { resume: Resume }) {
@@ -22,17 +23,25 @@ export function AcademicTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website, pi.linkedin, pi.github].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white px-10 py-8 shadow-lg" style={{ fontFamily: '"Computer Modern", "CMU Serif", Georgia, "Times New Roman", serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: '"Computer Modern", "CMU Serif", Georgia, "Times New Roman", serif' }}>
       {/* Header — LaTeX-inspired centered layout */}
       <div className="mb-6 text-center">
+        {pi.avatar && (
+          <AvatarImage
+            src={pi.avatar}
+            size={64}
+            avatarStyle={resume.themeConfig?.avatarStyle}
+            wrapperClassName="mx-auto mb-2 overflow-hidden"
+          />
+        )}
         <h1 className="text-2xl font-bold text-zinc-900" style={{ letterSpacing: '0.02em' }}>
           {pi.fullName || 'Your Name'}
         </h1>
         {pi.jobTitle && (
-          <p className="mt-0.5 text-base text-zinc-500 italic">{pi.jobTitle}</p>
+          <p className="mt-0.5 text-base text-zinc-700 italic">{pi.jobTitle}</p>
         )}
         {contacts.length > 0 && (
-          <p className="mt-1.5 text-xs text-zinc-500">
+          <p className="mt-1.5 text-xs text-zinc-600">
             {contacts.map((c, i) => (
               <span key={i}>
                 {c}{i < contacts.length - 1 ? ' \u00B7 ' : ''}
@@ -51,14 +60,14 @@ export function AcademicTemplate({ resume }: { resume: Resume }) {
             <h2 className="mb-1.5 text-xs font-bold uppercase tracking-[0.25em] text-zinc-800" style={{ borderBottom: '1px solid #d4d4d8', paddingBottom: '2px' }}>
               {section.title}
             </h2>
-            <AcademicSectionContent section={section} />
+            <AcademicSectionContent section={section} resume={resume} />
           </div>
         ))}
     </div>
   );
 }
 
-function AcademicSectionContent({ section }: { section: any }) {
+function AcademicSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -75,11 +84,14 @@ function AcademicSectionContent({ section }: { section: any }) {
               <div>
                 <span className="text-sm font-bold text-zinc-800">{item.position}</span>
                 {item.company && <span className="text-sm text-zinc-600">, {item.company}</span>}
-                {item.location && <span className="text-sm text-zinc-400">, {item.location}</span>}
+                {item.location && <span className="text-sm text-zinc-500">, {item.location}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-500">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-500">{item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-0.5 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="text-xs text-zinc-500 italic">{resume.language === 'zh' ? '技术栈' : 'Technologies'}: {item.technologies.join(', ')}</p>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-0.5 list-disc pl-5">
                 {item.highlights.map((h: string, i: number) => (
@@ -104,7 +116,7 @@ function AcademicSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold text-zinc-800">{item.degree}</span>
                 {item.field && <span className="text-sm text-zinc-600"> in {item.field}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-500">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-500">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.institution}{item.location ? `, ${item.location}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -144,17 +156,17 @@ function AcademicSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <div>
                 <span className="text-sm font-bold text-zinc-800">{item.name}</span>
-                {item.url && <span className="text-xs text-zinc-400 ml-1">[{item.url}]</span>}
+                {item.url && <span className="text-xs text-zinc-500 ml-1">[{item.url}]</span>}
               </div>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-500">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>
             {item.description && <p className="mt-0.5 text-sm text-zinc-600">{item.description}</p>}
             {item.technologies?.length > 0 && (
-              <p className="text-xs text-zinc-500 italic">Technologies: {item.technologies.join(', ')}</p>
+              <p className="text-xs text-zinc-500 italic">{resume.language === 'zh' ? '技术栈' : 'Technologies'}: {item.technologies.join(', ')}</p>
             )}
             {item.highlights?.length > 0 && (
               <ul className="mt-0.5 list-disc pl-5">

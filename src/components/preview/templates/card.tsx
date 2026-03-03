@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#18181b';
@@ -26,11 +27,17 @@ export function CardTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website, pi.linkedin, pi.github].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div className="mb-6 text-center">
         {pi.avatar && (
-          <img src={pi.avatar} alt="" className="mx-auto mb-3 h-20 w-20 rounded-full object-cover" style={{ border: `3px solid ${ACCENT}` }} />
+          <AvatarImage
+            src={pi.avatar}
+            size={80}
+            avatarStyle={resume.themeConfig?.avatarStyle}
+            className="mx-auto mb-3"
+            style={{ border: `3px solid ${ACCENT}` }}
+          />
         )}
         <h1 className="text-2xl font-bold" style={{ color: PRIMARY }}>{pi.fullName || 'Your Name'}</h1>
         {pi.jobTitle && <p className="mt-1 text-sm font-medium" style={{ color: ACCENT }}>{pi.jobTitle}</p>}
@@ -55,7 +62,7 @@ export function CardTemplate({ resume }: { resume: Resume }) {
                   {section.title}
                 </h2>
               </div>
-              <CardSectionContent section={section} />
+              <CardSectionContent section={section} resume={resume} />
             </div>
           </div>
         ))}
@@ -63,7 +70,7 @@ export function CardTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function CardSectionContent({ section }: { section: any }) {
+function CardSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -82,9 +89,18 @@ function CardSectionContent({ section }: { section: any }) {
                 {item.company && <span className="text-sm" style={{ color: ACCENT }}> | {item.company}</span>}
                 {item.location && <span className="text-sm text-zinc-400"> , {item.location}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-600">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -106,7 +122,7 @@ function CardSectionContent({ section }: { section: any }) {
           <div key={item.id} className="rounded-md bg-white p-3" style={{ border: '1px solid #f4f4f5' }}>
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.institution}</span>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}{item.location ? ` , ${item.location}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -153,7 +169,7 @@ function CardSectionContent({ section }: { section: any }) {
               <span className="text-sm font-semibold" style={{ color: ACCENT }}>{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

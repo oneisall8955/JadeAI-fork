@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#37352f';
@@ -26,12 +27,17 @@ export function BlocksTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header - clean Notion-like */}
       <div className="mb-6">
         <div className="flex items-center gap-4">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-14 w-14 shrink-0 rounded-md object-cover" />
+            <AvatarImage
+              src={pi.avatar}
+              avatarStyle={resume.themeConfig?.avatarStyle}
+              size={56}
+              className="shrink-0"
+            />
           )}
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-bold" style={{ color: PRIMARY }}>{pi.fullName || 'Your Name'}</h1>
@@ -64,7 +70,7 @@ export function BlocksTemplate({ resume }: { resume: Resume }) {
               </h2>
             </div>
             <div className="ml-5">
-              <BlocksSectionContent section={section} />
+              <BlocksSectionContent section={section} resume={resume} />
             </div>
           </div>
         ))}
@@ -72,7 +78,7 @@ export function BlocksTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function BlocksSectionContent({ section }: { section: any }) {
+function BlocksSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -92,11 +98,20 @@ function BlocksSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.position}</h3>
               <span className="shrink-0 text-xs" style={{ color: '#9b9a97' }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm" style={{ color: ACCENT }}>{item.company}{item.location ? ` , ${item.location}` : ''}</p>}
             {item.description && <p className="mt-1 text-sm" style={{ color: '#787774' }}>{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1.5 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-sm px-1.5 py-0.5 text-[10px]" style={{ backgroundColor: SUBTLE_BG, color: '#787774' }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -118,7 +133,7 @@ function BlocksSectionContent({ section }: { section: any }) {
           <div key={item.id} className="rounded-md border p-3" style={{ borderColor: '#e3e2de' }}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.institution}</h3>
-              <span className="text-xs" style={{ color: '#9b9a97' }}>{item.startDate} - {item.endDate}</span>
+              <span className="text-xs" style={{ color: '#9b9a97' }}>{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm" style={{ color: '#787774' }}>{item.degree}{item.field ? ` in ${item.field}` : ''}{item.location ? ` , ${item.location}` : ''}</p>
             {item.gpa && <p className="text-xs" style={{ color: '#9b9a97' }}>GPA: {item.gpa}</p>}
@@ -173,7 +188,7 @@ function BlocksSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-semibold" style={{ color: ACCENT }}>{item.name}</h3>
               {item.startDate && (
                 <span className="text-xs" style={{ color: '#9b9a97' }}>
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

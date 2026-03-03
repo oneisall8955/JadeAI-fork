@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const BLUE = '#2563eb';
@@ -37,9 +38,7 @@ export function BerlinTemplate({ resume }: { resume: Resume }) {
 
         <div className="relative flex items-center gap-6">
           {pi.avatar && (
-            <div className="shrink-0 border-4 p-0.5" style={{ borderColor: YELLOW }}>
-              <img src={pi.avatar} alt="" className="h-20 w-20 object-cover" />
-            </div>
+            <AvatarImage src={pi.avatar} size={80} avatarStyle={resume.themeConfig?.avatarStyle} wrapperClassName="shrink-0 border-4 p-0.5" wrapperStyle={{ borderColor: YELLOW }} />
           )}
           <div>
             <h1 className="text-3xl font-extrabold uppercase tracking-tight">{pi.fullName || 'Your Name'}</h1>
@@ -67,7 +66,7 @@ export function BerlinTemplate({ resume }: { resume: Resume }) {
                 <h2 className="text-sm font-extrabold uppercase tracking-wider" style={{ color: TEXT }}>{section.title}</h2>
                 <div className="ml-auto h-1 w-12" style={{ backgroundColor: YELLOW }} />
               </div>
-              <BerlinSectionContent section={section} />
+              <BerlinSectionContent section={section} lang={resume.language} />
             </div>
           ))}
       </div>
@@ -75,7 +74,7 @@ export function BerlinTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function BerlinSectionContent({ section }: { section: any }) {
+function BerlinSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -93,10 +92,17 @@ function BerlinSectionContent({ section }: { section: any }) {
           <div key={item.id} className="border-l-4 pl-4" style={{ borderColor: YELLOW }}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: TEXT }}>{item.position}</h3>
-              <span className="shrink-0 text-xs font-bold" style={{ color: BLUE }}>{item.startDate} &ndash; {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs font-bold" style={{ color: BLUE }}>{item.startDate} &ndash; {item.endDate || (item.current ? (lang === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.company && <p className="text-sm font-semibold" style={{ color: BLUE }}>{item.company}{item.location ? `, ${item.location}` : ''}</p>}
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1.5 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="px-2 py-0.5 text-[10px] font-bold text-white" style={{ backgroundColor: BLUE }}>{t}</span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 space-y-0.5">
                 {item.highlights.map((h: string, i: number) => (
@@ -120,7 +126,7 @@ function BerlinSectionContent({ section }: { section: any }) {
           <div key={item.id} className="border-l-4 pl-4" style={{ borderColor: BLUE }}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: TEXT }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</h3>
-              <span className="shrink-0 text-xs" style={{ color: BLUE }}>{item.startDate} &ndash; {item.endDate}</span>
+              <span className="shrink-0 text-xs" style={{ color: BLUE }}>{item.startDate} &ndash; {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.institution && <p className="text-sm font-semibold" style={{ color: YELLOW }}>{item.institution}{item.location ? `, ${item.location}` : ''}</p>}
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -171,7 +177,7 @@ function BerlinSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: BLUE }}>{item.name}</h3>
               {item.startDate && (
-                <span className="shrink-0 text-xs" style={{ color: BLUE }}>{item.startDate}{item.endDate ? ` \u2013 ${item.endDate}` : ''}</span>
+                <span className="shrink-0 text-xs" style={{ color: BLUE }}>{item.startDate} {'\u2013'} {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</span>
               )}
             </div>
             {item.description && <p className="mt-0.5 text-sm text-zinc-600">{item.description}</p>}

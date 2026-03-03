@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#4f46e5';
@@ -33,9 +34,12 @@ export function MaterialTemplate({ resume }: { resume: Resume }) {
       >
         <div className="flex items-center gap-6">
           {pi.avatar && (
-            <div className="shrink-0 rounded-full bg-white/20 p-1 shadow-lg">
-              <img src={pi.avatar} alt="" className="h-20 w-20 rounded-full object-cover" />
-            </div>
+            <AvatarImage
+              src={pi.avatar}
+              avatarStyle={resume.themeConfig?.avatarStyle}
+              size={80}
+              wrapperClassName="shrink-0 bg-white/20 p-1 shadow-lg"
+            />
           )}
           <div className="min-w-0 flex-1">
             <h1 className="text-3xl font-bold tracking-tight">{pi.fullName || 'Your Name'}</h1>
@@ -66,7 +70,7 @@ export function MaterialTemplate({ resume }: { resume: Resume }) {
                   <span className="inline-block h-5 w-1 rounded-full" style={{ backgroundColor: VIOLET }} />
                   {section.title}
                 </h2>
-                <MaterialSectionContent section={section} />
+                <MaterialSectionContent section={section} resume={resume} />
               </div>
             </div>
           ))}
@@ -75,7 +79,7 @@ export function MaterialTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function MaterialSectionContent({ section }: { section: any }) {
+function MaterialSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -91,11 +95,20 @@ function MaterialSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-semibold text-zinc-800">{item.position}</h3>
               <span className="shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-semibold text-white shadow-sm" style={{ backgroundColor: PRIMARY }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm font-medium" style={{ color: VIOLET }}>{item.company}{item.location ? `, ${item.location}` : ''}</p>}
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1.5 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full px-2 py-0.5 text-[10px] font-medium text-white" style={{ backgroundColor: PRIMARY }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -117,7 +130,7 @@ function MaterialSectionContent({ section }: { section: any }) {
           <div key={item.id} className="rounded-lg bg-zinc-50 p-4">
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-semibold text-zinc-800">{item.institution}</h3>
-              <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate}</span>
+              <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}{item.location ? ` — ${item.location}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -168,7 +181,7 @@ function MaterialSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.name}</h3>
               {item.startDate && (
                 <span className="text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

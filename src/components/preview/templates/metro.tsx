@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#1e293b';
@@ -25,11 +26,17 @@ export function MetroTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div className="mb-6 flex items-center gap-5">
         {pi.avatar && (
-          <img src={pi.avatar} alt="" className="h-16 w-16 shrink-0 object-cover" style={{ border: `3px solid ${AMBER}` }} />
+          <AvatarImage
+            src={pi.avatar}
+            avatarStyle={resume.themeConfig?.avatarStyle}
+            size={64}
+            className="shrink-0"
+            style={{ border: `3px solid ${AMBER}` }}
+          />
         )}
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-extrabold uppercase tracking-tight" style={{ color: PRIMARY }}>{pi.fullName || 'Your Name'}</h1>
@@ -62,14 +69,14 @@ export function MetroTemplate({ resume }: { resume: Resume }) {
               </div>
               <div className="h-0.5 flex-1" style={{ backgroundColor: AMBER }} />
             </div>
-            <MetroSectionContent section={section} />
+            <MetroSectionContent section={section} resume={resume} />
           </div>
         ))}
     </div>
   );
 }
 
-function MetroSectionContent({ section }: { section: any }) {
+function MetroSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -89,11 +96,20 @@ function MetroSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.position}</h3>
               <span className="shrink-0 px-2 py-0.5 text-[10px] font-bold uppercase text-white" style={{ backgroundColor: PRIMARY }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm font-semibold" style={{ color: AMBER }}>{item.company}</p>}
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="px-1.5 py-0.5 text-[10px] font-bold text-white" style={{ backgroundColor: PRIMARY }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -115,7 +131,7 @@ function MetroSectionContent({ section }: { section: any }) {
           <div key={item.id} className="border-l-3 pl-4" style={{ borderColor: AMBER }}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.institution}</h3>
-              <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate}</span>
+              <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -166,7 +182,7 @@ function MetroSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.name}</h3>
               {item.startDate && (
                 <span className="text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

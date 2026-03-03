@@ -32,6 +32,7 @@ export function WorkExperienceSection({ section, onUpdate }: Props) {
       endDate: null,
       current: false,
       description: '',
+      technologies: [],
       highlights: [],
     };
     onUpdate({ items: [...items, newItem] } as any);
@@ -69,9 +70,10 @@ export function WorkExperienceSection({ section, onUpdate }: Props) {
             </FieldWrapper>
             <FieldWrapper>
               <EditableDate label={t('startDate')} value={item.startDate} onChange={(v) => updateItem(index, { startDate: v })} />
-              <EditableDate label={t('endDate')} value={item.endDate || ''} onChange={(v) => updateItem(index, { endDate: v || null })} />
+              <EditableDate label={t('endDate')} value={item.endDate || ''} onChange={(v) => updateItem(index, { endDate: v || null, current: !v })} />
             </FieldWrapper>
             <EditableRichText label={t('description')} value={item.description} onChange={(v) => updateItem(index, { description: v })} />
+            <EditableList label={t('technologies')} items={item.technologies || []} onChange={(v) => updateItem(index, { technologies: v })} />
             <EditableList label={t('highlights')} items={item.highlights} onChange={(v) => updateItem(index, { highlights: v })} />
           </div>
         </div>

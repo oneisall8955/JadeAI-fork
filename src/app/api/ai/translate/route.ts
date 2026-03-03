@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { generateText, type LanguageModel } from 'ai';
-import { getModel, extractAIConfig, AIConfigError } from '@/lib/ai/provider';
+import { getModel, extractAIConfig, getJsonProviderOptions, AIConfigError, type AIConfig } from '@/lib/ai/provider';
 import { resolveUser, getUserIdFromRequest } from '@/lib/auth/helpers';
 import { resumeRepository } from '@/lib/db/repositories/resume.repository';
 import { translateInputSchema } from '@/lib/ai/translate-schema';
@@ -53,16 +53,15 @@ Rules:
 async function translateSection(
   section: { sectionId: string; type: string; title: string; content: unknown },
   targetLanguage: string,
-  model: LanguageModel
+  model: LanguageModel,
+  aiConfig: AIConfig
 ) {
   const result = await generateText({
     model,
     maxOutputTokens: 4096,
     system: getSectionTranslatePrompt(targetLanguage),
     prompt: `Translate this resume section. Return JSON with keys: sectionId, title, content.\n\n${JSON.stringify(section)}`,
-    providerOptions: {
-      openai: { response_format: { type: 'json_object' } },
-    },
+    providerOptions: getJsonProviderOptions(aiConfig),
   });
 
   return extractJson(result.text, singleSectionSchema);
@@ -113,7 +112,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { resumeId, targetLanguage, sectionIds } = parsed.data;
+    const { resumeId, targetLanguage, sectionIds, mode } = parsed.data;
 
     const resume = await resumeRepository.findById(resumeId);
     if (!resume) {
@@ -123,9 +122,25 @@ export async function POST(request: NextRequest) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
 
+    // In copy mode, duplicate the resume first and translate the copy
+    let targetResumeId = resumeId;
+    let workingSections = resume.sections;
+    let newResumeId: string | undefined;
+
+    if (mode === 'copy') {
+      const newTitle = `${resume.title}-${LANGUAGE_NAMES[targetLanguage] || targetLanguage}`;
+      const duplicated = await resumeRepository.duplicate(resumeId, user.id, newTitle);
+      if (!duplicated) {
+        return new Response(JSON.stringify({ error: 'Failed to duplicate resume' }), { status: 500 });
+      }
+      targetResumeId = duplicated.id;
+      workingSections = duplicated.sections;
+      newResumeId = duplicated.id;
+    }
+
     const allSections = sectionIds
-      ? resume.sections.filter((s: any) => sectionIds.includes(s.id))
-      : resume.sections;
+      ? workingSections.filter((s: any) => sectionIds.includes(s.id))
+      : workingSections;
 
     if (allSections.length === 0) {
       return new Response(JSON.stringify({ error: 'No sections found to translate' }), { status: 400 });
@@ -184,7 +199,7 @@ export async function POST(request: NextRequest) {
             sectionsData,
             MAX_CONCURRENCY,
             async (section) => {
-              const translated = await translateSection(section, targetLanguage, model);
+              const translated = await translateSection(section, targetLanguage, model, aiConfig);
 
               // Merge back stripped fields (e.g. avatar)
               const saved = strippedFields.get(translated.sectionId);
@@ -221,28 +236,29 @@ export async function POST(request: NextRequest) {
           }
 
           // Update resume language
-          await resumeRepository.update(resumeId, { language: targetLanguage });
+          await resumeRepository.update(targetResumeId, { language: targetLanguage });
         } catch (err) {
           console.error('Unexpected error during translation:', err);
         }
 
         // Always send done and close — even if something above threw
         try {
-          const updatedResume = await resumeRepository.findById(resumeId);
+          const updatedResume = await resumeRepository.findById(targetResumeId);
           const updatedSections = sectionIds
             ? updatedResume?.sections.filter((s: any) => sectionIds.includes(s.id))
             : updatedResume?.sections;
 
           send({
             type: 'done',
-            resumeId,
+            resumeId: targetResumeId,
             language: targetLanguage,
             sections: updatedSections || [],
             failedCount,
+            ...(newResumeId ? { newResumeId } : {}),
           });
         } catch (err) {
           console.error('Error fetching final data:', err);
-          send({ type: 'done', resumeId, language: targetLanguage, sections: [], failedCount });
+          send({ type: 'done', resumeId: targetResumeId, language: targetLanguage, sections: [], failedCount, ...(newResumeId ? { newResumeId } : {}) });
         }
 
         try {

@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const BG = '#111827';
@@ -33,9 +34,13 @@ export function NeonTemplate({ resume }: { resume: Resume }) {
       <div className="relative px-10 py-8" style={{ borderBottom: `2px solid ${CYAN}`, boxShadow: `0 2px 20px ${CYAN}40` }}>
         <div className="flex items-center gap-5">
           {pi.avatar && (
-            <div className="shrink-0 rounded-lg p-0.5" style={{ border: `2px solid ${CYAN}`, boxShadow: `0 0 12px ${CYAN}60` }}>
-              <img src={pi.avatar} alt="" className="h-20 w-20 rounded-lg object-cover" />
-            </div>
+            <AvatarImage
+              src={pi.avatar}
+              avatarStyle={resume.themeConfig?.avatarStyle}
+              size={80}
+              wrapperClassName="shrink-0 p-0.5"
+              wrapperStyle={{ border: `2px solid ${CYAN}`, boxShadow: `0 0 12px ${CYAN}60` }}
+            />
           )}
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: CYAN, textShadow: `0 0 20px ${CYAN}60` }}>
@@ -72,7 +77,7 @@ export function NeonTemplate({ resume }: { resume: Resume }) {
                 </h2>
                 <div className="h-px flex-1" style={{ background: `linear-gradient(90deg, ${CYAN}40, transparent)` }} />
               </div>
-              <NeonSectionContent section={section} />
+              <NeonSectionContent section={section} resume={resume} />
             </div>
           ))}
       </div>
@@ -80,7 +85,7 @@ export function NeonTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function NeonSectionContent({ section }: { section: any }) {
+function NeonSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -102,11 +107,20 @@ function NeonSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: CYAN }}>{item.position}</h3>
               <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ color: BG, backgroundColor: VIOLET, boxShadow: `0 0 8px ${VIOLET}40` }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm font-medium" style={{ color: VIOLET }}>{item.company}</p>}
             {item.description && <p className="mt-1 text-sm" style={{ color: TEXT }}>{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ color: BG, backgroundColor: i % 2 === 0 ? CYAN : VIOLET, boxShadow: `0 0 6px ${i % 2 === 0 ? CYAN : VIOLET}40` }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 space-y-0.5">
                 {item.highlights.map((h: string, i: number) => (
@@ -131,7 +145,7 @@ function NeonSectionContent({ section }: { section: any }) {
           <div key={item.id} className="rounded-lg p-4" style={{ border: `1px solid ${VIOLET}20`, backgroundColor: `${VIOLET}05` }}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: CYAN }}>{item.institution}</h3>
-              <span className="text-xs" style={{ color: TEXT_DIM }}>{item.startDate} - {item.endDate}</span>
+              <span className="text-xs" style={{ color: TEXT_DIM }}>{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm" style={{ color: TEXT }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs" style={{ color: VIOLET }}>GPA: {item.gpa}</p>}
@@ -189,7 +203,7 @@ function NeonSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: CYAN }}>{item.name}</h3>
               {item.startDate && (
                 <span className="text-xs" style={{ color: TEXT_DIM }}>
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

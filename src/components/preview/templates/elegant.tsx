@@ -2,6 +2,7 @@
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, GitHubContent, CustomContent } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
+import { AvatarImage } from '../avatar-image';
 
 const GOLD = '#d4af37';
 
@@ -10,11 +11,11 @@ export function ElegantTemplate({ resume }: { resume: Resume }) {
   const pi = (personalInfo?.content || {}) as PersonalInfoContent;
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-10 shadow-lg" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
       {/* Header */}
       <div className="mb-8 text-center">
         {pi.avatar && (
-          <img src={pi.avatar} alt="" className="mx-auto mb-3 h-20 w-20 rounded-full border-2 object-cover" style={{ borderColor: GOLD }} />
+          <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} className="mx-auto mb-3" style={{ border: `2px solid ${GOLD}` }} />
         )}
         <h1 className="text-3xl font-bold tracking-wide" style={{ color: '#2c2c2c' }}>{pi.fullName || 'Your Name'}</h1>
         {pi.jobTitle && <p className="mt-1 text-base tracking-widest text-zinc-500 uppercase">{pi.jobTitle}</p>}
@@ -41,14 +42,14 @@ export function ElegantTemplate({ resume }: { resume: Resume }) {
               <h2 className="shrink-0 text-sm font-bold uppercase tracking-[0.2em]" style={{ color: GOLD }}>{section.title}</h2>
               <div className="h-px flex-1" style={{ background: GOLD }} />
             </div>
-            <ElegantSectionContent section={section} />
+            <ElegantSectionContent section={section} lang={resume.language} />
           </div>
         ))}
     </div>
   );
 }
 
-function ElegantSectionContent({ section }: { section: any }) {
+function ElegantSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -65,9 +66,10 @@ function ElegantSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold" style={{ color: '#2c2c2c' }}>{item.position}</span>
                 {item.company && <span className="text-sm text-zinc-500"> — {item.company}</span>}
               </div>
-              <span className="shrink-0 text-xs italic text-zinc-400">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs italic text-zinc-400">{item.startDate} – {item.endDate || (item.current ? (lang === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && <p className="mt-0.5 text-xs text-zinc-400 italic">{lang === 'zh' ? '技术栈' : 'Tech'}: {item.technologies.join(', ')}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-5">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
@@ -89,7 +91,7 @@ function ElegantSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold" style={{ color: '#2c2c2c' }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
                 {item.institution && <span className="text-sm text-zinc-500"> — {item.institution}</span>}
               </div>
-              <span className="shrink-0 text-xs italic text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs italic text-zinc-400">{item.startDate} – {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.gpa && <p className="text-sm text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
@@ -124,10 +126,10 @@ function ElegantSectionContent({ section }: { section: any }) {
           <div key={item.id}>
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-bold" style={{ color: '#2c2c2c' }}>{item.name}</span>
-              {item.startDate && <span className="shrink-0 text-xs italic text-zinc-400">{item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}</span>}
+              {item.startDate && <span className="shrink-0 text-xs italic text-zinc-400">{item.startDate} – {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</span>}
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
-            {item.technologies?.length > 0 && <p className="mt-0.5 text-xs text-zinc-400 italic">Tech: {item.technologies.join(', ')}</p>}
+            {item.technologies?.length > 0 && <p className="mt-0.5 text-xs text-zinc-400 italic">{lang === 'zh' ? '技术栈' : 'Tech'}: {item.technologies.join(', ')}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-5">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}

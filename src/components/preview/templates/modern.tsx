@@ -2,6 +2,7 @@
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
+import { AvatarImage } from '../avatar-image';
 
 export function ModernTemplate({ resume }: { resume: Resume }) {
   const personalInfo = resume.sections.find((s) => s.type === 'personal_info');
@@ -26,9 +27,7 @@ export function ModernTemplate({ resume }: { resume: Resume }) {
 
         <div className="relative flex items-center gap-6">
           {pi.avatar && (
-            <div className="shrink-0 rounded-full p-[2px]" style={{ background: 'linear-gradient(135deg, #e94560, #0f3460)' }}>
-              <img src={pi.avatar} alt="" className="h-[80px] w-[80px] rounded-full border-2 border-white/10 object-cover" />
-            </div>
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} className="border-2 border-white/10" wrapperClassName="shrink-0 p-[2px]" wrapperStyle={{ background: 'linear-gradient(135deg, #e94560, #0f3460)' }} />
           )}
           <div className="min-w-0 flex-1">
             <h1 className="text-3xl font-bold tracking-tight">{pi.fullName || 'Your Name'}</h1>
@@ -64,7 +63,7 @@ export function ModernTemplate({ resume }: { resume: Resume }) {
                 <span className="h-[3px] w-7 rounded-full" style={{ background: 'linear-gradient(90deg, #e94560, #0f3460)' }} />
                 {section.title}
               </h2>
-              <ModernSectionContent section={section} />
+              <ModernSectionContent section={section} lang={resume.language} />
             </div>
           ))}
       </div>
@@ -72,7 +71,7 @@ export function ModernTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function ModernSectionContent({ section }: { section: any }) {
+function ModernSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -87,11 +86,18 @@ function ModernSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-semibold text-zinc-800">{item.position}</h3>
               <span className="shrink-0 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-zinc-500">
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (lang === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm" style={{ color: '#e94560' }}>{item.company}</p>}
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-600">{t}</span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
@@ -110,7 +116,7 @@ function ModernSectionContent({ section }: { section: any }) {
           <div key={item.id} className="border-l-2 pl-4" style={{ borderColor: '#0f3460' }}>
             <h3 className="text-sm font-semibold text-zinc-800">{item.institution}</h3>
             <p className="text-sm text-zinc-600">{item.degree} {item.field && `- ${item.field}`}</p>
-            <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate}</span>
+            <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</span>
             {item.gpa && <p className="mt-0.5 text-xs text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
@@ -150,7 +156,7 @@ function ModernSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-semibold text-zinc-800">{item.name}</h3>
               {item.startDate && (
                 <span className="shrink-0 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-zinc-500">
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (lang === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

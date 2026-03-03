@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#1e293b';
@@ -38,12 +39,18 @@ export function MosaicTemplate({ resume }: { resume: Resume }) {
   );
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div className="mb-6 rounded-lg p-5" style={{ background: `linear-gradient(135deg, ${TILE_COLORS[0]}15, ${TILE_COLORS[3]}15)` }}>
         <div className="flex items-center gap-4">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-18 w-18 shrink-0 rounded-lg object-cover" style={{ border: `3px solid ${TILE_COLORS[0]}` }} />
+            <AvatarImage
+              src={pi.avatar}
+              avatarStyle={resume.themeConfig?.avatarStyle}
+              size={72}
+              className="shrink-0"
+              style={{ border: `3px solid ${TILE_COLORS[0]}` }}
+            />
           )}
           <div>
             <h1 className="text-2xl font-bold" style={{ color: PRIMARY }}>{pi.fullName || 'Your Name'}</h1>
@@ -74,7 +81,7 @@ export function MosaicTemplate({ resume }: { resume: Resume }) {
                   {section.title}
                 </h2>
               </div>
-              <MosaicSectionContent section={section} color={color} />
+              <MosaicSectionContent section={section} color={color} resume={resume} />
             </div>
           </div>
         );
@@ -83,7 +90,7 @@ export function MosaicTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function MosaicSectionContent({ section, color }: { section: any; color: string }) {
+function MosaicSectionContent({ section, color, resume }: { section: any; color: string; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -101,9 +108,18 @@ function MosaicSectionContent({ section, color }: { section: any; color: string 
                 <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.position}</span>
                 {item.company && <span className="text-sm" style={{ color }}> | {item.company}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-600">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -125,7 +141,7 @@ function MosaicSectionContent({ section, color }: { section: any; color: string 
           <div key={item.id} className="rounded-md bg-white p-3 shadow-sm">
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.institution}</span>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -172,7 +188,7 @@ function MosaicSectionContent({ section, color }: { section: any; color: string 
               <span className="text-sm font-semibold" style={{ color }}>{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

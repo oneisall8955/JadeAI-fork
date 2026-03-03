@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#1e293b';
@@ -30,11 +31,11 @@ export function ZigzagTemplate({ resume }: { resume: Resume }) {
   );
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div className="mb-6 text-center">
         {pi.avatar && (
-          <img src={pi.avatar} alt="" className="mx-auto mb-3 h-20 w-20 rounded-full object-cover" style={{ border: `3px solid ${ACCENT}` }} />
+          <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} className="mx-auto mb-3" style={{ border: `3px solid ${ACCENT}` }} />
         )}
         <h1 className="text-2xl font-bold" style={{ color: PRIMARY }}>{pi.fullName || 'Your Name'}</h1>
         {pi.jobTitle && <p className="mt-1 text-sm font-medium" style={{ color: ACCENT }}>{pi.jobTitle}</p>}
@@ -67,7 +68,7 @@ export function ZigzagTemplate({ resume }: { resume: Resume }) {
                 </h2>
               </div>
               <div className={isEven ? '' : 'text-right'}>
-                <ZigzagSectionContent section={section} isEven={isEven} />
+                <ZigzagSectionContent section={section} isEven={isEven} resume={resume} />
               </div>
             </div>
             {/* Zigzag connector between sections */}
@@ -85,7 +86,7 @@ export function ZigzagTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function ZigzagSectionContent({ section, isEven }: { section: any; isEven: boolean }) {
+function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEven: boolean; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -103,9 +104,18 @@ function ZigzagSectionContent({ section, isEven }: { section: any; isEven: boole
                 <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.position}</span>
                 {item.company && <span className="text-sm" style={{ color: ACCENT }}> | {item.company}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full px-2 py-0.5 text-[10px] text-white" style={{ backgroundColor: ACCENT }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -127,7 +137,7 @@ function ZigzagSectionContent({ section, isEven }: { section: any; isEven: boole
           <div key={item.id}>
             <div className={`flex items-baseline justify-between ${isEven ? '' : 'flex-row-reverse'}`}>
               <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.institution}</span>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -174,7 +184,7 @@ function ZigzagSectionContent({ section, isEven }: { section: any; isEven: boole
               <span className="text-sm font-semibold" style={{ color: ACCENT }}>{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

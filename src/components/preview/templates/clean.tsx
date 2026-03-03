@@ -14,6 +14,7 @@ import type {
   GitHubContent,
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
+import { AvatarImage } from '../avatar-image';
 
 const BLUE = '#0066cc';
 const TEAL = '#0d9488';
@@ -23,12 +24,12 @@ export function CleanTemplate({ resume }: { resume: Resume }) {
   const pi = (personalInfo?.content || {}) as PersonalInfoContent;
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-4">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-16 w-16 shrink-0 rounded-full border-2 object-cover" style={{ borderColor: BLUE }} />
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={64} className="shrink-0" style={{ border: `2px solid ${BLUE}` }} />
           )}
           <div>
             <h1 className="text-2xl font-bold" style={{ color: BLUE }}>{pi.fullName || 'Your Name'}</h1>
@@ -50,14 +51,14 @@ export function CleanTemplate({ resume }: { resume: Resume }) {
         .map((section) => (
           <div key={section.id} className="mb-5" data-section>
             <h2 className="mb-2 text-sm font-bold uppercase tracking-wider" style={{ color: BLUE }}>{section.title}</h2>
-            <CleanSectionContent section={section} />
+            <CleanSectionContent section={section} resume={resume} />
           </div>
         ))}
     </div>
   );
 }
 
-function CleanSectionContent({ section }: { section: any }) {
+function CleanSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -75,9 +76,18 @@ function CleanSectionContent({ section }: { section: any }) {
                 {item.company && <span className="text-sm" style={{ color: TEAL }}> | {item.company}</span>}
                 {item.location && <span className="text-sm text-zinc-400"> , {item.location}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full border px-2 py-0.5 text-[10px] font-medium" style={{ borderColor: TEAL, color: TEAL }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
@@ -100,7 +110,7 @@ function CleanSectionContent({ section }: { section: any }) {
                 {item.institution && <span className="text-sm text-zinc-500"> — {item.institution}</span>}
                 {item.location && <span className="text-sm text-zinc-400"> , {item.location}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.gpa && <p className="text-sm text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
@@ -138,7 +148,7 @@ function CleanSectionContent({ section }: { section: any }) {
               <span className="text-sm font-bold" style={{ color: TEAL }}>{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

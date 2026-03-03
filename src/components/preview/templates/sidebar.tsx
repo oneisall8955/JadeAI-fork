@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const SIDEBAR_BG = '#1e40af';
@@ -39,9 +40,12 @@ export function SidebarTemplate({ resume }: { resume: Resume }) {
         {/* Avatar & Name */}
         <div className="mb-6 text-center">
           {pi.avatar && (
-            <div className="mx-auto mb-3 h-24 w-24 overflow-hidden rounded-full border-3 border-white/30">
-              <img src={pi.avatar} alt="" className="h-full w-full object-cover" />
-            </div>
+            <AvatarImage
+              src={pi.avatar}
+              size={80}
+              avatarStyle={resume.themeConfig?.avatarStyle}
+              wrapperClassName="mx-auto mb-3 overflow-hidden rounded-lg border-2 border-white/20"
+            />
           )}
           <h1 className="text-xl font-bold tracking-tight text-white">{pi.fullName || 'Your Name'}</h1>
           {pi.jobTitle && <p className="mt-1 text-sm font-light text-blue-200">{pi.jobTitle}</p>}
@@ -105,7 +109,7 @@ export function SidebarTemplate({ resume }: { resume: Resume }) {
             <h2 className="mb-2 border-b-2 pb-1 text-sm font-bold uppercase tracking-wider" style={{ color: SIDEBAR_BG, borderColor: ACCENT }}>
               {section.title}
             </h2>
-            <MainSectionContent section={section} />
+            <MainSectionContent section={section} resume={resume} />
           </div>
         ))}
       </div>
@@ -196,7 +200,7 @@ function SidebarSectionContent({ section }: { section: any }) {
   return null;
 }
 
-function MainSectionContent({ section }: { section: any }) {
+function MainSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -214,9 +218,18 @@ function MainSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-semibold text-zinc-800">{item.position}</span>
                 {item.company && <span className="text-sm" style={{ color: ACCENT }}> | {item.company}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-sm px-1.5 py-0.5 text-[10px] text-white" style={{ backgroundColor: ACCENT }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -238,7 +251,7 @@ function MainSectionContent({ section }: { section: any }) {
           <div key={item.id}>
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold text-zinc-800">{item.institution}</span>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -265,7 +278,7 @@ function MainSectionContent({ section }: { section: any }) {
               <span className="text-sm font-semibold text-zinc-800">{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

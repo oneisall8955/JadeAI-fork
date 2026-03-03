@@ -1,6 +1,7 @@
 'use client';
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, GitHubContent, CustomContent } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#0f172a';
@@ -18,11 +19,11 @@ export function ScientistTemplate({ resume }: { resume: Resume }) {
   );
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-10 shadow-lg" style={{ fontFamily: 'Georgia, serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Georgia, serif' }}>
       {/* Header - scientific paper style */}
       <div className="mb-6 text-center">
         {pi.avatar && (
-          <img src={pi.avatar} alt="" className="mx-auto mb-3 h-14 w-14 rounded-full object-cover" style={{ border: `2px solid ${ACCENT}` }} />
+          <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={56} className="mx-auto mb-3" style={{ border: `2px solid ${ACCENT}` }} />
         )}
         <h1 className="text-2xl font-bold" style={{ color: PRIMARY }}>
           {pi.fullName || 'Your Name'}
@@ -52,7 +53,7 @@ export function ScientistTemplate({ resume }: { resume: Resume }) {
           </div>
           <div className="h-px w-full" style={{ backgroundColor: GRID_LINE }} />
           <div className="mt-2">
-            <ScientistSectionContent section={section} />
+            <ScientistSectionContent section={section} resume={resume} />
           </div>
         </div>
       ))}
@@ -63,7 +64,7 @@ export function ScientistTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function ScientistSectionContent({ section }: { section: any }) {
+function ScientistSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -86,10 +87,13 @@ function ScientistSectionContent({ section }: { section: any }) {
                 {item.company && <span className="text-sm" style={{ color: MUTED }}>, {item.company}</span>}
               </div>
               <span className="shrink-0 text-xs" style={{ color: MUTED }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.description && <p className="mt-1 pl-6 text-sm" style={{ color: BODY_TEXT }}>{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="pl-6 text-xs italic" style={{ color: MUTED }}>{resume.language === 'zh' ? '技术栈' : 'Methods/Tools'}: {item.technologies.join(', ')}</p>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 pl-6 space-y-0.5">
                 {item.highlights.map((h: string, i: number) => (
@@ -120,7 +124,7 @@ function ScientistSectionContent({ section }: { section: any }) {
                 {item.institution && <span className="text-sm" style={{ color: MUTED }}>, {item.institution}</span>}
               </div>
               <span className="shrink-0 text-xs" style={{ color: MUTED }}>
-                {item.startDate} - {item.endDate}
+                {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
               </span>
             </div>
             {item.gpa && <p className="pl-6 text-xs" style={{ color: MUTED }}>GPA: {item.gpa}</p>}
@@ -165,13 +169,13 @@ function ScientistSectionContent({ section }: { section: any }) {
               </div>
               {item.startDate && (
                 <span className="shrink-0 text-xs" style={{ color: MUTED }}>
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>
             {item.description && <p className="mt-1 pl-6 text-sm" style={{ color: BODY_TEXT }}>{item.description}</p>}
             {item.technologies?.length > 0 && (
-              <p className="pl-6 text-xs italic" style={{ color: MUTED }}>Methods/Tools: {item.technologies.join(', ')}</p>
+              <p className="pl-6 text-xs italic" style={{ color: MUTED }}>{resume.language === 'zh' ? '技术栈' : 'Methods/Tools'}: {item.technologies.join(', ')}</p>
             )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 pl-6 space-y-0.5">

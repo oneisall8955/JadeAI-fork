@@ -24,6 +24,7 @@ export interface WorkExperienceItem {
   endDate: string | null;
   current: boolean;
   description: string;
+  technologies: string[];
   highlights: string[];
 }
 
@@ -152,6 +153,7 @@ export interface ThemeConfig {
   lineSpacing: number;
   margin: { top: number; right: number; bottom: number; left: number };
   sectionSpacing: number;
+  avatarStyle?: 'circle' | 'oneInch';
 }
 
 export interface Resume {

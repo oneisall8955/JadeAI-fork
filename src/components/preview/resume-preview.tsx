@@ -137,6 +137,7 @@ const DEFAULT_THEME: ThemeConfig = {
   lineSpacing: 1.5,
   margin: { top: 20, right: 20, bottom: 20, left: 20 },
   sectionSpacing: 16,
+  avatarStyle: 'oneInch',
 };
 
 /** Returns true if a hex colour is dark (luminance < 0.4) */
@@ -160,7 +161,11 @@ function buildThemeCSS(scopeId: string, theme: ThemeConfig, template: string): s
     ${s} > div {
       font-family: ${theme.fontFamily}, sans-serif !important;
       line-height: ${theme.lineSpacing} !important;
-      ${needsPadding ? `padding: ${m.top}px ${m.right}px ${m.bottom}px ${m.left}px !important;` : ''}
+      ${needsPadding ? `padding-top: ${m.top}px !important; padding-right: ${m.right}px !important; padding-bottom: ${m.bottom}px !important; padding-left: ${m.left}px !important;` : ''}
+      --base-margin-top: ${m.top}px;
+      --base-margin-right: ${m.right}px;
+      --base-margin-bottom: ${m.bottom}px;
+      --base-margin-left: ${m.left}px;
     }
     ${s} p, ${s} li, ${s} span, ${s} td, ${s} a {
       font-size: ${fs.body} !important;

@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 export function BoldTemplate({ resume }: { resume: Resume }) {
@@ -25,7 +26,7 @@ export function BoldTemplate({ resume }: { resume: Resume }) {
       <div className="bg-black px-8 py-8 text-white">
         <div className="flex items-center gap-5">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-20 w-20 shrink-0 rounded-full border-3 border-white object-cover" />
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} className="shrink-0" style={{ border: '3px solid white' }} />
           )}
           <div>
             <h1 className="text-4xl font-black tracking-tight">{pi.fullName || 'Your Name'}</h1>
@@ -48,7 +49,7 @@ export function BoldTemplate({ resume }: { resume: Resume }) {
               <h2 className="mb-3 border-b-4 border-black pb-1 text-lg font-black uppercase tracking-wider text-black">
                 {section.title}
               </h2>
-              <BoldSectionContent section={section} />
+              <BoldSectionContent section={section} resume={resume} />
             </div>
           ))}
       </div>
@@ -56,7 +57,7 @@ export function BoldTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function BoldSectionContent({ section }: { section: any }) {
+function BoldSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -75,10 +76,19 @@ function BoldSectionContent({ section }: { section: any }) {
                 {item.location && <span className="text-sm text-zinc-400"> , {item.location}</span>}
               </div>
               <span className="shrink-0 bg-black px-2 py-0.5 text-xs font-medium text-white">
-                {item.startDate} – {item.current ? 'Present' : item.endDate}
+                {item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="border border-zinc-300 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-5">
                 {item.highlights.map((h: string, i: number) => <li key={i} className="text-sm text-zinc-600">{h}</li>)}
@@ -101,7 +111,7 @@ function BoldSectionContent({ section }: { section: any }) {
                 {item.institution && <span className="text-sm text-zinc-500"> — {item.institution}</span>}
                 {item.location && <span className="text-sm text-zinc-400"> , {item.location}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.gpa && <p className="text-sm text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
@@ -139,7 +149,7 @@ function BoldSectionContent({ section }: { section: any }) {
               <span className="text-base font-bold text-black">{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

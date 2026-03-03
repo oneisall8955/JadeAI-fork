@@ -16,7 +16,7 @@ const ACCENT = '#92400e';
 const BG = '#fefce8';
 const TEXT = '#57534e';
 
-function buildRetroSectionContent(section: Section): string {
+function buildRetroSectionContent(section: Section, lang: string): string {
   const c = section.content as any;
 
   if (section.type === 'summary') {
@@ -25,16 +25,17 @@ function buildRetroSectionContent(section: Section): string {
 
   if (section.type === 'work_experience') {
     return `<div class="space-y-4">${((c as WorkExperienceContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.position)}</h3><span class="shrink-0 text-xs" style="color:${ACCENT};font-family:'Courier New',monospace">${esc(it.startDate)} - ${it.current ? 'Present' : esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.position)}</h3><span class="shrink-0 text-xs" style="color:${ACCENT};font-family:'Courier New',monospace">${esc(it.startDate)} - ${esc(it.endDate) || (it.current ? (lang === 'zh' ? '至今' : 'Present') : '')}</span></div>
       ${it.company ? `<p class="text-sm italic" style="color:${ACCENT}">${esc(it.company)}</p>` : ''}
       ${it.description ? `<p class="mt-1 text-sm" style="color:${TEXT}">${esc(it.description)}</p>` : ''}
+      ${it.technologies?.length ? `<p class="mt-1 text-xs italic" style="color:${ACCENT}">${lang === 'zh' ? '技术栈' : 'Technologies'}: ${esc(it.technologies.join(', '))}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1.5 space-y-0.5">${it.highlights.filter(Boolean).map((h: string) => `<li class="flex items-start gap-2 text-sm" style="color:${TEXT}"><span class="mt-1 shrink-0 text-xs" style="color:${PRIMARY}">&bull;</span>${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
   }
 
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.institution)}</h3><span class="text-xs" style="color:${ACCENT};font-family:'Courier New',monospace">${esc(it.startDate)} - ${esc(it.endDate)}</span></div>
+      <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.institution)}</h3><span class="text-xs" style="color:${ACCENT};font-family:'Courier New',monospace">${esc(it.startDate)} - ${esc(it.endDate) || (lang === 'zh' ? '至今' : 'Present')}</span></div>
       <p class="text-sm" style="color:${TEXT}">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</p>
       ${it.gpa ? `<p class="text-xs" style="color:${ACCENT}">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 space-y-0.5">${it.highlights.filter(Boolean).map((h: string) => `<li class="flex items-start gap-2 text-sm" style="color:${TEXT}"><span class="mt-1 shrink-0 text-xs" style="color:${PRIMARY}">&bull;</span>${esc(h)}</li>`).join('')}</ul>` : ''}
@@ -49,9 +50,9 @@ function buildRetroSectionContent(section: Section): string {
 
   if (section.type === 'projects') {
     return `<div class="space-y-3">${((c as ProjectsContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.name)}</h3>${it.startDate ? `<span class="text-xs" style="color:${ACCENT};font-family:'Courier New',monospace">${esc(it.startDate)}${it.endDate ? ` - ${esc(it.endDate)}` : ''}</span>` : ''}</div>
+      <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.name)}</h3>${it.startDate ? `<span class="text-xs" style="color:${ACCENT};font-family:'Courier New',monospace">${esc(it.startDate)} - ${it.endDate ? esc(it.endDate) : (lang === 'zh' ? '至今' : 'Present')}</span>` : ''}</div>
       ${it.description ? `<p class="mt-0.5 text-sm" style="color:${TEXT}">${esc(it.description)}</p>` : ''}
-      ${it.technologies?.length ? `<p class="mt-1 text-xs italic" style="color:${ACCENT}">Technologies: ${esc(it.technologies.join(', '))}</p>` : ''}
+      ${it.technologies?.length ? `<p class="mt-1 text-xs italic" style="color:${ACCENT}">${lang === 'zh' ? '技术栈' : 'Technologies'}: ${esc(it.technologies.join(', '))}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 space-y-0.5">${it.highlights.filter(Boolean).map((h: string) => `<li class="flex items-start gap-2 text-sm" style="color:${TEXT}"><span class="mt-1 shrink-0 text-xs" style="color:${PRIMARY}">&bull;</span>${esc(h)}</li>`).join('')}</ul>` : ''}
     </div>`).join('')}</div>`;
   }
@@ -102,12 +103,12 @@ export function buildRetroHtml(resume: ResumeWithSections): string {
       : '';
     return `<div data-section>
       <div class="mb-2 text-center"><h2 class="inline-block text-xs font-bold uppercase tracking-[0.3em]" style="color:${PRIMARY};border-bottom:1px solid ${PRIMARY};border-top:1px solid ${PRIMARY};padding:4px 16px">${esc(s.title)}</h2></div>
-      <div class="mb-4">${buildRetroSectionContent(s)}</div>
+      <div class="mb-4">${buildRetroSectionContent(s, resume.language || 'en')}</div>
       ${divider}
     </div>`;
   }).join('');
 
-  return `<div class="mx-auto max-w-[210mm] p-8 shadow-lg" style="font-family:Georgia,serif;background-color:${BG}">
+  return `<div class="mx-auto max-w-[210mm] shadow-lg" style="font-family:Georgia,serif;background-color:${BG}">
     <div class="mb-6 pb-4 text-center" style="border-bottom:3px double ${PRIMARY}">
       ${pi.avatar ? `<img src="${esc(pi.avatar)}" alt="" class="mx-auto mb-3 h-20 w-20 rounded-full object-cover" style="border:2px solid ${PRIMARY}"/>` : ''}
       <h1 class="text-3xl font-bold" style="color:${PRIMARY};font-family:'Courier New',monospace">${esc(pi.fullName || 'Your Name')}</h1>

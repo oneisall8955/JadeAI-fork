@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#1e1b4b';
@@ -36,9 +37,7 @@ export function ArtisticTemplate({ resume }: { resume: Resume }) {
 
         <div className="relative flex items-center gap-5">
           {pi.avatar && (
-            <div className="shrink-0 rounded-full p-1" style={{ border: `3px dashed ${HIGHLIGHT}` }}>
-              <img src={pi.avatar} alt="" className="h-20 w-20 rounded-full object-cover" />
-            </div>
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} wrapperClassName="shrink-0 p-1" wrapperStyle={{ border: `3px dashed ${HIGHLIGHT}` }} />
           )}
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">{pi.fullName || 'Your Name'}</h1>
@@ -68,7 +67,7 @@ export function ArtisticTemplate({ resume }: { resume: Resume }) {
                 </h2>
                 <div className="h-0.5 flex-1" style={{ borderTop: `2px dashed ${ACCENT}40` }} />
               </div>
-              <ArtisticSectionContent section={section} />
+              <ArtisticSectionContent section={section} resume={resume} />
             </div>
           ))}
       </div>
@@ -76,7 +75,7 @@ export function ArtisticTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function ArtisticSectionContent({ section }: { section: any }) {
+function ArtisticSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -99,11 +98,20 @@ function ArtisticSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.position}</h3>
               <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold text-white" style={{ backgroundColor: ACCENT }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm font-medium" style={{ color: ACCENT }}>{item.company}{item.location ? `, ${item.location}` : ''}</p>}
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full px-2 py-0.5 text-[10px] font-medium text-white" style={{ backgroundColor: i % 2 === 0 ? ACCENT : PRIMARY }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 space-y-0.5">
                 {item.highlights.map((h: string, i: number) => (
@@ -128,7 +136,7 @@ function ArtisticSectionContent({ section }: { section: any }) {
           <div key={item.id} className="rounded-lg p-4" style={{ border: `1px dashed ${ACCENT}30` }}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.institution}</h3>
-              <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate}</span>
+              <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}{item.location ? ` — ${item.location}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -183,7 +191,7 @@ function ArtisticSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.name}</h3>
               {item.startDate && (
                 <span className="text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

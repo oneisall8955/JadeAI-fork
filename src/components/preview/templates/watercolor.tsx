@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#4c1d95';
@@ -28,14 +29,19 @@ export function WatercolorTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website, pi.linkedin, pi.github].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div className="mb-6 rounded-2xl px-6 py-5" style={{ backgroundColor: WASH }}>
         <div className="flex items-center gap-5">
           {pi.avatar && (
-            <div className="shrink-0 rounded-full p-1" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${PRIMARY})` }}>
-              <img src={pi.avatar} alt="" className="h-20 w-20 rounded-full border-2 border-white object-cover" />
-            </div>
+            <AvatarImage
+              src={pi.avatar}
+              avatarStyle={resume.themeConfig?.avatarStyle}
+              size={80}
+              className="border-2 border-white"
+              wrapperClassName="shrink-0 p-1"
+              wrapperStyle={{ background: `linear-gradient(135deg, ${ACCENT}, ${PRIMARY})` }}
+            />
           )}
           <div>
             <h1 className="text-3xl font-bold" style={{ color: PRIMARY }}>
@@ -69,14 +75,14 @@ export function WatercolorTemplate({ resume }: { resume: Resume }) {
                 {section.title}
               </h2>
             </div>
-            <WatercolorSectionContent section={section} />
+            <WatercolorSectionContent section={section} lang={resume.language} />
           </div>
         ))}
     </div>
   );
 }
 
-function WatercolorSectionContent({ section }: { section: any }) {
+function WatercolorSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -98,11 +104,20 @@ function WatercolorSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.position}</h3>
               <span className="shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-semibold text-white" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${PRIMARY})` }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (lang === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm font-medium" style={{ color: ACCENT }}>{item.company}</p>}
             {item.description && <p className="mt-1 text-sm" style={{ color: TEXT }}>{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-full px-2 py-0.5 text-[10px] font-medium text-white" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${PRIMARY})` }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 space-y-0.5">
                 {item.highlights.map((h: string, i: number) => (
@@ -127,7 +142,7 @@ function WatercolorSectionContent({ section }: { section: any }) {
           <div key={item.id} className="rounded-xl p-4" style={{ backgroundColor: WASH }}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.institution}</h3>
-              <span className="text-xs" style={{ color: TEXT }}>{item.startDate} - {item.endDate}</span>
+              <span className="text-xs" style={{ color: TEXT }}>{item.startDate} - {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm" style={{ color: TEXT_DARK }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs" style={{ color: ACCENT }}>GPA: {item.gpa}</p>}
@@ -181,7 +196,7 @@ function WatercolorSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.name}</h3>
               {item.startDate && (
                 <span className="text-xs" style={{ color: TEXT }}>
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (lang === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

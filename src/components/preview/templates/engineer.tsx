@@ -1,6 +1,7 @@
 'use client';
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#1e293b';
@@ -20,7 +21,7 @@ export function EngineerTemplate({ resume }: { resume: Resume }) {
       <div className="px-8 py-6" style={{ background: `linear-gradient(135deg, ${PRIMARY} 0%, #334155 100%)` }}>
         <div className="flex items-center gap-5">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-16 w-16 shrink-0 rounded object-cover" style={{ border: `2px solid ${ACCENT}` }} />
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={64} className="shrink-0" style={{ border: `2px solid ${ACCENT}` }} />
           )}
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">{pi.fullName || 'Your Name'}</h1>
@@ -60,7 +61,7 @@ export function EngineerTemplate({ resume }: { resume: Resume }) {
                 <div className="h-px flex-1" style={{ backgroundColor: ACCENT }} />
                 <div className="h-1.5 w-1.5" style={{ backgroundColor: ACCENT }} />
               </div>
-              <EngineerSectionContent section={section} />
+              <EngineerSectionContent section={section} resume={resume} />
             </div>
           ))}
       </div>
@@ -68,7 +69,7 @@ export function EngineerTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function EngineerSectionContent({ section }: { section: any }) {
+function EngineerSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -93,10 +94,23 @@ function EngineerSectionContent({ section }: { section: any }) {
                 className="shrink-0 px-2 py-0.5 text-[10px] font-medium uppercase"
                 style={{ fontFamily: 'JetBrains Mono, Consolas, monospace', color: SECONDARY, backgroundColor: LIGHT_BG }}
               >
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.description && <p className="mt-1 text-sm" style={{ color: BODY_TEXT }}>{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                {item.technologies.map((t: string, i: number) => (
+                  <span
+                    key={i}
+                    className="border px-2 py-0.5 text-[10px] font-medium"
+                    style={{ fontFamily: 'JetBrains Mono, Consolas, monospace', borderColor: ACCENT, color: ACCENT }}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 space-y-0.5">
                 {item.highlights.map((h: string, i: number) => (
@@ -130,7 +144,7 @@ function EngineerSectionContent({ section }: { section: any }) {
                 className="shrink-0 text-xs"
                 style={{ fontFamily: 'JetBrains Mono, Consolas, monospace', color: SECONDARY }}
               >
-                {item.startDate} - {item.endDate}
+                {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
               </span>
             </div>
             {item.gpa && <p className="text-xs" style={{ color: SECONDARY }}>GPA: {item.gpa}</p>}
@@ -190,7 +204,7 @@ function EngineerSectionContent({ section }: { section: any }) {
                   className="shrink-0 text-xs"
                   style={{ fontFamily: 'JetBrains Mono, Consolas, monospace', color: SECONDARY }}
                 >
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

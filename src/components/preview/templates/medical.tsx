@@ -1,6 +1,7 @@
 'use client';
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const TEAL_800 = '#115e59';
@@ -12,12 +13,18 @@ export function MedicalTemplate({ resume }: { resume: Resume }) {
   const pi = (personalInfo?.content || {}) as PersonalInfoContent;
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white p-8 shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
       <div className="mb-6 border-b-2 pb-5" style={{ borderColor: TEAL_500 }}>
         <div className="flex items-center gap-5">
           {pi.avatar && (
-            <img src={pi.avatar} alt="" className="h-18 w-18 shrink-0 rounded-full object-cover" style={{ border: `3px solid ${TEAL_500}` }} />
+            <AvatarImage
+              src={pi.avatar}
+              size={72}
+              avatarStyle={resume.themeConfig?.avatarStyle}
+              className="shrink-0"
+              style={{ border: `3px solid ${TEAL_500}` }}
+            />
           )}
           <div className="flex-1">
             <h1 className="text-2xl font-bold" style={{ color: TEAL_800 }}>{pi.fullName || 'Your Name'}</h1>
@@ -43,14 +50,14 @@ export function MedicalTemplate({ resume }: { resume: Resume }) {
             >
               {section.title}
             </h2>
-            <MedicalSectionContent section={section} />
+            <MedicalSectionContent section={section} resume={resume} />
           </div>
         ))}
     </div>
   );
 }
 
-function MedicalSectionContent({ section }: { section: any }) {
+function MedicalSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -67,9 +74,12 @@ function MedicalSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold" style={{ color: TEAL_800 }}>{item.position}</span>
                 {item.company && <span className="text-sm text-gray-600"> | {item.company}</span>}
               </div>
-              <span className="shrink-0 text-xs font-medium" style={{ color: TEAL_500 }}>{item.startDate} - {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs font-medium" style={{ color: TEAL_500 }}>{item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-gray-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="mt-0.5 text-xs text-gray-400">{resume.language === 'zh' ? '技术栈' : 'Tech'}: {item.technologies.join(', ')}</p>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -93,7 +103,7 @@ function MedicalSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-bold" style={{ color: TEAL_800 }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
                 {item.institution && <span className="text-sm text-gray-600"> - {item.institution}</span>}
               </div>
-              <span className="shrink-0 text-xs font-medium" style={{ color: TEAL_500 }}>{item.startDate} - {item.endDate}</span>
+              <span className="shrink-0 text-xs font-medium" style={{ color: TEAL_500 }}>{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.gpa && <p className="text-sm text-gray-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
@@ -130,12 +140,12 @@ function MedicalSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-bold" style={{ color: TEAL_800 }}>{item.name}</span>
               {item.startDate && (
-                <span className="shrink-0 text-xs font-medium" style={{ color: TEAL_500 }}>{item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}</span>
+                <span className="shrink-0 text-xs font-medium" style={{ color: TEAL_500 }}>{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
               )}
             </div>
             {item.description && <p className="mt-1 text-sm text-gray-600">{item.description}</p>}
             {item.technologies?.length > 0 && (
-              <p className="mt-0.5 text-xs text-gray-400">Tech: {item.technologies.join(', ')}</p>
+              <p className="mt-0.5 text-xs text-gray-400">{resume.language === 'zh' ? '技术栈' : 'Tech'}: {item.technologies.join(', ')}</p>
             )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 list-disc pl-4">

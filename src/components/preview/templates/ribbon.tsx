@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#1e293b';
@@ -35,9 +36,7 @@ export function RibbonTemplate({ resume }: { resume: Resume }) {
 
         <div className="flex items-center gap-5">
           {pi.avatar && (
-            <div className="shrink-0 rounded-full border-3 border-white/40 p-0.5">
-              <img src={pi.avatar} alt="" className="h-20 w-20 rounded-full object-cover" />
-            </div>
+            <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} wrapperClassName="shrink-0 border-3 border-white/40 p-0.5" />
           )}
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-white">{pi.fullName || 'Your Name'}</h1>
@@ -68,7 +67,7 @@ export function RibbonTemplate({ resume }: { resume: Resume }) {
                 <div className="h-0 w-0" style={{ borderTop: '13px solid transparent', borderBottom: '13px solid transparent', borderLeft: `8px solid ${RIBBON}` }} />
                 <div className="ml-2 h-px flex-1" style={{ backgroundColor: '#e5e7eb' }} />
               </div>
-              <RibbonSectionContent section={section} />
+              <RibbonSectionContent section={section} resume={resume} />
             </div>
           ))}
       </div>
@@ -76,7 +75,7 @@ export function RibbonTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function RibbonSectionContent({ section }: { section: any }) {
+function RibbonSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -94,9 +93,18 @@ function RibbonSectionContent({ section }: { section: any }) {
                 <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.position}</span>
                 {item.company && <span className="text-sm" style={{ color: ACCENT }}> | {item.company}</span>}
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.current ? 'Present' : item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}</span>
             </div>
             {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {item.technologies.map((t: string, i: number) => (
+                  <span key={i} className="rounded-sm bg-red-50 px-1.5 py-0.5 text-[10px]" style={{ color: ACCENT }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">
                 {item.highlights.map((h: string, i: number) => (
@@ -118,7 +126,7 @@ function RibbonSectionContent({ section }: { section: any }) {
           <div key={item.id} className="border-l-2 pl-3" style={{ borderColor: RIBBON }}>
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.institution}</span>
-              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate}</span>
+              <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
@@ -165,7 +173,7 @@ function RibbonSectionContent({ section }: { section: any }) {
               <span className="text-sm font-semibold" style={{ color: ACCENT }}>{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400">
-                  {item.startDate}{item.endDate ? ` – ${item.endDate}` : ''}
+                  {item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>

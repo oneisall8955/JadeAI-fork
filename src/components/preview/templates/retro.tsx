@@ -13,6 +13,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
+import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
 
 const PRIMARY = '#78350f';
@@ -26,11 +27,11 @@ export function RetroTemplate({ resume }: { resume: Resume }) {
   const contacts = [pi.email, pi.phone, pi.location, pi.website, pi.linkedin, pi.github].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-[210mm] p-8 shadow-lg" style={{ fontFamily: 'Georgia, serif', backgroundColor: BG }}>
+    <div className="mx-auto max-w-[210mm] shadow-lg" style={{ fontFamily: 'Georgia, serif', backgroundColor: BG }}>
       {/* Header */}
       <div className="mb-6 pb-4 text-center" style={{ borderBottom: `3px double ${PRIMARY}` }}>
         {pi.avatar && (
-          <img src={pi.avatar} alt="" className="mx-auto mb-3 h-20 w-20 rounded-full object-cover" style={{ border: `2px solid ${PRIMARY}` }} />
+          <AvatarImage src={pi.avatar} avatarStyle={resume.themeConfig?.avatarStyle} size={80} className="mx-auto mb-3" style={{ border: `2px solid ${PRIMARY}` }} />
         )}
         <h1 className="text-3xl font-bold" style={{ color: PRIMARY, fontFamily: "'Courier New', monospace" }}>
           {pi.fullName || 'Your Name'}
@@ -67,7 +68,7 @@ export function RetroTemplate({ resume }: { resume: Resume }) {
               </h2>
             </div>
             <div className="mb-4">
-              <RetroSectionContent section={section} />
+              <RetroSectionContent section={section} resume={resume} />
             </div>
             {/* Ornamental divider between sections */}
             {idx < arr.length - 1 && (
@@ -83,7 +84,7 @@ export function RetroTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function RetroSectionContent({ section }: { section: any }) {
+function RetroSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -103,11 +104,16 @@ function RetroSectionContent({ section }: { section: any }) {
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.position}</h3>
               <span className="shrink-0 text-xs" style={{ color: ACCENT, fontFamily: "'Courier New', monospace" }}>
-                {item.startDate} - {item.current ? 'Present' : item.endDate}
+                {item.startDate} - {item.endDate || (item.current ? (resume.language === 'zh' ? '至今' : 'Present') : '')}
               </span>
             </div>
             {item.company && <p className="text-sm italic" style={{ color: ACCENT }}>{item.company}</p>}
             {item.description && <p className="mt-1 text-sm" style={{ color: '#57534e' }}>{item.description}</p>}
+            {item.technologies?.length > 0 && (
+              <p className="mt-1 text-xs italic" style={{ color: ACCENT }}>
+                Technologies: {item.technologies.join(', ')}
+              </p>
+            )}
             {item.highlights?.length > 0 && (
               <ul className="mt-1.5 space-y-0.5">
                 {item.highlights.map((h: string, i: number) => (
@@ -132,7 +138,7 @@ function RetroSectionContent({ section }: { section: any }) {
           <div key={item.id}>
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.institution}</h3>
-              <span className="text-xs" style={{ color: ACCENT, fontFamily: "'Courier New', monospace" }}>{item.startDate} - {item.endDate}</span>
+              <span className="text-xs" style={{ color: ACCENT, fontFamily: "'Courier New', monospace" }}>{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm" style={{ color: '#57534e' }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
             {item.gpa && <p className="text-xs" style={{ color: ACCENT }}>GPA: {item.gpa}</p>}
@@ -176,7 +182,7 @@ function RetroSectionContent({ section }: { section: any }) {
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.name}</h3>
               {item.startDate && (
                 <span className="text-xs" style={{ color: ACCENT, fontFamily: "'Courier New', monospace" }}>
-                  {item.startDate}{item.endDate ? ` - ${item.endDate}` : ''}
+                  {item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}
                 </span>
               )}
             </div>
