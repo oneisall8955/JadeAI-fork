@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const PRIMARY = '#1a1a1a';
 const ACCENT = '#dc2626';
@@ -214,7 +215,7 @@ function MagazineSectionContent({ section, resume }: { section: any; resume: Res
           <div key={item.id} className="flex items-baseline gap-2">
             <span className="h-1.5 w-1.5 shrink-0 rotate-45" style={{ backgroundColor: ACCENT }} />
             <span className="text-sm font-bold" style={{ color: PRIMARY }}>{item.name}</span>
-            <span className="text-xs" style={{ color: SECONDARY }}>{item.issuer}{item.date ? ` | ${item.date}` : ''}</span>
+            {(item.issuer || item.date) && <span className="text-xs" style={{ color: SECONDARY }}>{item.issuer}{item.issuer && item.date ? ' | ' : ''}{item.date}</span>}
           </div>
         ))}
       </div>
@@ -269,6 +270,10 @@ function MagazineSectionContent({ section, resume }: { section: any; resume: Res
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

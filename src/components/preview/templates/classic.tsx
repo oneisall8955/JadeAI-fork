@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 import { AvatarImage } from '../avatar-image';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 export function ClassicTemplate({ resume }: { resume: Resume }) {
   const personalInfo = resume.sections.find((s) => s.type === 'personal_info');
@@ -192,7 +193,7 @@ function SectionContent({ section, lang }: { section: any; lang?: string }) {
         {items.map((item: any) => (
           <div key={item.id}>
             <span className="font-semibold text-zinc-800 text-sm">{item.name}</span>
-            <span className="text-sm text-zinc-600"> — {item.issuer}{item.date ? ` (${item.date})` : ''}</span>
+            {(item.issuer || item.date) && <span className="text-sm text-zinc-600">{item.issuer && <> — {item.issuer}</>}{item.date && <> ({item.date})</>}</span>}
           </div>
         ))}
       </div>
@@ -231,6 +232,10 @@ function SectionContent({ section, lang }: { section: any; lang?: string }) {
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic items

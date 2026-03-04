@@ -6,6 +6,9 @@ import { generateHtml } from './builders';
 import { generatePlainText } from './plain-text';
 import { generateDocx } from './docx';
 
+// Chromium download + PDF render needs more time on Vercel serverless
+export const maxDuration = 60;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -37,7 +40,7 @@ export async function GET(
         return NextResponse.json(resume);
       }
       case 'html': {
-        const html = generateHtml(resume);
+        const html = await generateHtml(resume);
         return new NextResponse(html, {
           status: 200,
           headers: {
@@ -68,7 +71,7 @@ export async function GET(
       }
       case 'pdf': {
         const fitOnePage = request.nextUrl.searchParams.get('fitOnePage') === 'true';
-        const pdfHtml = generateHtml(resume, true);
+        const pdfHtml = await generateHtml(resume, true);
         const pdfBuffer = await generatePdf(pdfHtml, { fitOnePage });
         return new NextResponse(new Uint8Array(pdfBuffer), {
           status: 200,

@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 import { buildClassicSectionContent } from './classic';
 
 const PRIMARY = '#1e293b';
@@ -62,7 +62,7 @@ function buildEngineerSectionContent(section: Section, lang: string = 'en'): str
 
   if (section.type === 'certifications') {
     return `<div class="space-y-1.5">${((c as CertificationsContent).items || []).map((it: any) =>
-      `<div class="flex items-center gap-2"><span class="h-1 w-1 shrink-0" style="background-color:${ACCENT}"></span><span class="text-sm font-medium" style="color:${PRIMARY}">${esc(it.name)}</span><span class="text-sm" style="color:${SECONDARY}"> — ${esc(it.issuer)} (${esc(it.date)})</span></div>`
+      `<div class="flex items-center gap-2"><span class="h-1 w-1 shrink-0" style="background-color:${ACCENT}"></span><span class="text-sm font-medium" style="color:${PRIMARY}">${esc(it.name)}</span><span class="text-sm" style="color:${SECONDARY}">${it.issuer ? ` — ${esc(it.issuer)}` : ''}${it.date ? ` (${esc(it.date)})` : ''}</span></div>`
     ).join('')}</div>`;
   }
 
@@ -79,6 +79,17 @@ function buildEngineerSectionContent(section: Section, lang: string = 'en'): str
       <div class="mt-2 h-px" style="background-color:${RULE_COLOR}"></div>
     </div>`).join('')}</div>`;
   }
+
+  if (section.type === 'github') {
+    return `<div class="space-y-3">${((c as GitHubContent).items || []).map((it: any) => `<div>
+      <div class="flex items-baseline justify-between"><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.name)}</span><span class="shrink-0 text-xs" style="font-family:JetBrains Mono,Consolas,monospace;color:${SECONDARY}">\u2B50 ${it.stars?.toLocaleString() ?? 0}</span></div>
+      ${it.language ? `<span class="text-xs" style="font-family:JetBrains Mono,Consolas,monospace;color:${ACCENT}">${esc(it.language)}</span>` : ''}
+      ${it.description ? `<p class="mt-1 text-sm" style="color:${BODY_TEXT}">${esc(it.description)}</p>` : ''}
+      <div class="mt-2 h-px" style="background-color:${RULE_COLOR}"></div>
+    </div>`).join('')}</div>`;
+  }
+
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
 
   // Generic items fallback
   if (c.items) {

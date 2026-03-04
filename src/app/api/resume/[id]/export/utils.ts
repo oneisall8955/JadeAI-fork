@@ -58,6 +58,18 @@ export function buildHighlights(highlights: string[] | undefined, liClass: strin
   return highlights.filter(Boolean).map(h => `<li class="${liClass}">${esc(h)}</li>`).join('');
 }
 
+// ─── QR codes inline HTML (SVGs pre-generated in builders.ts) ─
+
+export function buildQrCodesHtml(section: Section): string {
+  const c = section.content as any;
+  const svgs = (c._qrSvgs || {}) as Record<string, string>;
+  const items = (c.items || []).filter((q: any) => q.url?.trim() && svgs[q.id]);
+  if (items.length === 0) return '';
+  return `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:16px 24px;padding-top:4px">${items.map((qr: any) =>
+    `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:96px">${svgs[qr.id]}<span style="font-size:10px;color:#6b7280;line-height:1.2;text-align:center;word-break:break-all;max-width:96px">${esc(qr.label)}</span></div>`
+  ).join('')}</div>`;
+}
+
 // ─── Theme CSS for HTML export ────────────────────────────────
 
 const FONT_SIZE_SCALE: Record<string, { body: string; h1: string; h2: string; h3: string }> = {
@@ -93,7 +105,7 @@ export function buildExportThemeCSS(theme: typeof DEFAULT_THEME, template: strin
   const primaryIsDark = isDark(theme.primaryColor);
   return `
     ${sel} > div {
-      font-family: ${theme.fontFamily}, sans-serif !important;
+      font-family: ${theme.fontFamily}, 'Noto Sans SC', sans-serif !important;
       line-height: ${theme.lineSpacing} !important;
       ${needsPadding ? `padding-top: ${m.top}px !important; padding-right: ${m.right}px !important; padding-bottom: ${m.bottom}px !important; padding-left: ${m.left}px !important;` : ''}
       --base-body-size: ${fs.body};

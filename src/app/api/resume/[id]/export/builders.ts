@@ -1,5 +1,6 @@
 import { esc, buildExportThemeCSS, DEFAULT_THEME, type ResumeWithSections } from './utils';
 import { BACKGROUND_TEMPLATES } from '@/lib/constants';
+import { generateQrSvg } from '@/lib/qrcode';
 import { buildClassicHtml } from './templates/classic';
 import { buildModernHtml } from './templates/modern';
 import { buildMinimalHtml } from './templates/minimal';
@@ -132,7 +133,36 @@ const TEMPLATE_BUILDERS: Record<string, (r: ResumeWithSections) => string> = {
   mosaic: buildMosaicHtml,
 };
 
-export function generateHtml(resume: ResumeWithSections, forPdf = false): string {
+function isValidQrUrl(str: string): boolean {
+  if (!str?.trim()) return false;
+  try {
+    const raw = str.startsWith('http') ? str : `https://${str}`;
+    const url = new URL(raw);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
+    const host = url.hostname;
+    return host === 'localhost' || /\.\w{2,}$/.test(host) || /^\d{1,3}(\.\d{1,3}){3}$/.test(host);
+  } catch {
+    return false;
+  }
+}
+
+/** Pre-generate QR code SVGs and attach to qr_codes section content
+ *  so sync template builders can render them inline. */
+async function preGenerateQrSvgs(resume: ResumeWithSections): Promise<void> {
+  const qrSection = resume.sections.find((s: any) => s.type === 'qr_codes');
+  if (!qrSection || qrSection.visible === false) return;
+  const items = ((qrSection.content as any).items || []).filter((q: any) => isValidQrUrl(q.url));
+  if (items.length === 0) return;
+  const svgs: Record<string, string> = {};
+  for (const qr of items) {
+    try { svgs[qr.id] = await generateQrSvg(qr.url, 80); } catch { /* skip */ }
+  }
+  (qrSection.content as any)._qrSvgs = svgs;
+}
+
+export async function generateHtml(resume: ResumeWithSections, forPdf = false): Promise<string> {
+  // Pre-generate QR SVGs so sync template builders can use them
+  await preGenerateQrSvgs(resume);
   const builder = TEMPLATE_BUILDERS[resume.template] || buildClassicHtml;
   const bodyHtml = builder(resume);
   const theme = { ...DEFAULT_THEME, ...((resume as any).themeConfig || {}) };

@@ -3,6 +3,7 @@
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 import { AvatarImage } from '../avatar-image';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const DARK_GREEN = '#004d40';
 
@@ -212,6 +213,10 @@ function FormalSectionContent({ section, resume }: { section: any; resume: Resum
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   if (content.items) {

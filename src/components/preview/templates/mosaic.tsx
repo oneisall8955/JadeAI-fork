@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const PRIMARY = '#1e293b';
 const TILE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
@@ -281,6 +282,10 @@ function MosaicSectionContent({ section, color, resume }: { section: any; color:
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

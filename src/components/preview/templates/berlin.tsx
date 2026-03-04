@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const BLUE = '#2563eb';
 const YELLOW = '#eab308';
@@ -211,7 +212,7 @@ function BerlinSectionContent({ section, lang }: { section: any; lang?: string }
           <div key={item.id} className="flex items-baseline justify-between">
             <div>
               <span className="text-sm font-bold" style={{ color: TEXT }}>{item.name}</span>
-              <span className="text-sm text-zinc-500"> &mdash; {item.issuer}</span>
+              {item.issuer && <span className="text-sm text-zinc-500"> &mdash; {item.issuer}</span>}
             </div>
             {item.date && <span className="shrink-0 text-xs font-bold" style={{ color: BLUE }}>{item.date}</span>}
           </div>
@@ -267,6 +268,10 @@ function BerlinSectionContent({ section, lang }: { section: any; lang?: string }
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic items fallback

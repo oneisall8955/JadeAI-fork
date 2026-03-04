@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const PRIMARY = '#1e293b';
 const ACCENT = '#8b5cf6';
@@ -61,14 +62,14 @@ export function ZigzagTemplate({ resume }: { resume: Resume }) {
         return (
           <div key={section.id} className="mb-5" data-section>
             <div className="rounded-lg p-4" style={{ backgroundColor: isEven ? 'transparent' : ALT_BG }}>
-              <div className={`mb-2 flex items-center gap-2 ${isEven ? '' : 'flex-row-reverse'}`}>
+              <div className="mb-2 flex items-center gap-2">
                 <div className="h-5 w-1 rounded-full" style={{ backgroundColor: ACCENT }} />
-                <h2 className={`text-sm font-bold uppercase tracking-wider ${isEven ? '' : 'text-right'}`} style={{ color: PRIMARY }}>
+                <h2 className="text-sm font-bold uppercase tracking-wider" style={{ color: PRIMARY }}>
                   {section.title}
                 </h2>
               </div>
-              <div className={isEven ? '' : 'text-right'}>
-                <ZigzagSectionContent section={section} isEven={isEven} resume={resume} />
+              <div>
+                <ZigzagSectionContent section={section} resume={resume} />
               </div>
             </div>
             {/* Zigzag connector between sections */}
@@ -86,7 +87,7 @@ export function ZigzagTemplate({ resume }: { resume: Resume }) {
   );
 }
 
-function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEven: boolean; resume: Resume }) {
+function ZigzagSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
 
   if (section.type === 'summary') {
@@ -99,7 +100,7 @@ function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEve
       <div className="space-y-3 text-left">
         {items.map((item: any) => (
           <div key={item.id}>
-            <div className={`flex items-baseline justify-between ${isEven ? '' : 'flex-row-reverse'}`}>
+            <div className="flex items-baseline justify-between">
               <div>
                 <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.position}</span>
                 {item.company && <span className="text-sm" style={{ color: ACCENT }}> | {item.company}</span>}
@@ -135,7 +136,7 @@ function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEve
       <div className="space-y-3 text-left">
         {items.map((item: any) => (
           <div key={item.id}>
-            <div className={`flex items-baseline justify-between ${isEven ? '' : 'flex-row-reverse'}`}>
+            <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.institution}</span>
               <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
@@ -161,7 +162,7 @@ function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEve
         {categories.map((cat: any) => (
           <div key={cat.id}>
             <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-zinc-500">{cat.name}</p>
-            <div className={`flex flex-wrap gap-1.5 ${isEven ? '' : 'justify-end'}`}>
+            <div className="flex flex-wrap gap-1.5">
               {(cat.skills || []).map((skill: string, i: number) => (
                 <span key={i} className="rounded-full border px-2 py-0.5 text-xs font-medium" style={{ borderColor: `${ACCENT}50`, color: ACCENT, backgroundColor: `${ACCENT}08` }}>
                   {skill}
@@ -180,7 +181,7 @@ function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEve
       <div className="space-y-3 text-left">
         {items.map((item: any) => (
           <div key={item.id}>
-            <div className={`flex items-baseline justify-between ${isEven ? '' : 'flex-row-reverse'}`}>
+            <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold" style={{ color: ACCENT }}>{item.name}</span>
               {item.startDate && (
                 <span className="shrink-0 text-xs text-zinc-400">
@@ -216,7 +217,7 @@ function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEve
     return (
       <div className="space-y-1.5 text-left">
         {items.map((item: any) => (
-          <div key={item.id} className={`flex items-baseline justify-between ${isEven ? '' : 'flex-row-reverse'}`}>
+          <div key={item.id} className="flex items-baseline justify-between">
             <div>
               <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.name}</span>
               {item.issuer && <span className="text-sm text-zinc-600"> — {item.issuer}</span>}
@@ -231,7 +232,7 @@ function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEve
   if (section.type === 'languages') {
     const items = (content as LanguagesContent).items || [];
     return (
-      <div className={`flex flex-wrap gap-3 ${isEven ? '' : 'justify-end'}`}>
+      <div className="flex flex-wrap gap-3">
         {items.map((item: any) => (
           <div key={item.id} className="flex items-center gap-2 rounded-full px-3 py-1" style={{ backgroundColor: `${ACCENT}10`, border: `1px solid ${ACCENT}30` }}>
             <span className="text-sm font-medium" style={{ color: PRIMARY }}>{item.language}</span>
@@ -248,7 +249,7 @@ function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEve
       <div className="space-y-2 text-left">
         {items.map((item: any) => (
           <div key={item.id}>
-            <div className={`flex items-baseline justify-between ${isEven ? '' : 'flex-row-reverse'}`}>
+            <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.title}</span>
               {item.date && <span className="text-xs text-zinc-400">{item.date}</span>}
             </div>
@@ -258,6 +259,28 @@ function ZigzagSectionContent({ section, isEven, resume }: { section: any; isEve
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'github') {
+    const items = (content as GitHubContent).items || [];
+    return (
+      <div className="space-y-3 text-left">
+        {items.map((item: any) => (
+          <div key={item.id}>
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm font-bold" style={{ color: PRIMARY }}>{item.name}</span>
+              <span className="shrink-0 text-xs" style={{ color: ACCENT }}>{item.stars?.toLocaleString()}</span>
+            </div>
+            {item.language && <span className="text-xs text-zinc-500">{item.language}</span>}
+            {item.description && <p className="mt-1 text-sm text-zinc-600">{item.description}</p>}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

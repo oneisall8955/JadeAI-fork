@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 import { AvatarImage } from '../avatar-image';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 export function ProfessionalTemplate({ resume }: { resume: Resume }) {
   const personalInfo = resume.sections.find((s) => s.type === 'personal_info');
@@ -250,6 +251,10 @@ function ProfessionalSectionContent({ section, lang }: { section: any; lang?: st
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

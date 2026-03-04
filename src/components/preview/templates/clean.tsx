@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { isSectionEmpty } from '../utils';
 import { AvatarImage } from '../avatar-image';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const BLUE = '#0066cc';
 const TEAL = '#0d9488';
@@ -240,6 +241,10 @@ function CleanSectionContent({ section, resume }: { section: any; resume: Resume
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

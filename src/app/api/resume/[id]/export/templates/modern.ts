@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, buildHighlights, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 function buildModernSectionContent(section: Section, lang: string = 'en'): string {
   const c = section.content as any;
@@ -69,6 +69,7 @@ function buildModernSectionContent(section: Section, lang: string = 'en'): strin
       ${it.description ? `<p class="mt-0.5 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
   if (c.items) {
     return `<div class="space-y-2">${c.items.map((it: any) => `<div class="border-l-2 border-zinc-200 pl-4"><span class="text-sm font-medium text-zinc-700">${esc(it.name || it.title || it.language)}</span>${it.description ? `<p class="text-sm text-zinc-600">${esc(it.description)}</p>` : ''}</div>`).join('')}</div>`;
   }

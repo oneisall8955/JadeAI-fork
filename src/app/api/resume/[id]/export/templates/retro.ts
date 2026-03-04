@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 const PRIMARY = '#78350f';
 const ACCENT = '#92400e';
@@ -59,7 +59,7 @@ function buildRetroSectionContent(section: Section, lang: string): string {
 
   if (section.type === 'certifications') {
     return `<div class="space-y-1.5">${((c as CertificationsContent).items || []).map((it: any) =>
-      `<div class="flex items-baseline gap-2"><span class="shrink-0 text-xs" style="color:${PRIMARY}">&diams;</span><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.name)}</span><span class="text-xs" style="color:${ACCENT}">${esc(it.issuer)}${it.date ? ` (${esc(it.date)})` : ''}</span></div>`
+      `<div class="flex items-baseline gap-2"><span class="shrink-0 text-xs" style="color:${PRIMARY}">&diams;</span><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.name)}</span>${it.issuer || it.date ? `<span class="text-xs" style="color:${ACCENT}">${it.issuer ? esc(it.issuer) : ''}${it.issuer && it.date ? ' ' : ''}${it.date ? `(${esc(it.date)})` : ''}</span>` : ''}</div>`
     ).join('')}</div>`;
   }
 
@@ -84,6 +84,8 @@ function buildRetroSectionContent(section: Section, lang: string): string {
       ${it.description ? `<p class="mt-1 text-sm" style="color:${TEXT}">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
+
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
 
   if (c.items) {
     return `<div class="space-y-2">${c.items.map((it: any) => `<div><span class="text-sm font-bold" style="color:${PRIMARY}">${esc(it.name || it.title || it.language)}</span>${it.description ? `<p class="text-sm" style="color:${TEXT}">${esc(it.description)}</p>` : ''}</div>`).join('')}</div>`;

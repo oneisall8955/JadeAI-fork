@@ -3,6 +3,7 @@
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, GitHubContent, CustomContent } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const PRIMARY = '#1a472a';
 const ACCENT = '#15803d';
@@ -184,7 +185,7 @@ function LegalSectionContent({ section, resume }: { section: any; resume: Resume
         {((content as CertificationsContent).items || []).map((item: any) => (
           <div key={item.id} className="text-sm">
             <span className="font-bold" style={{ color: PRIMARY }}>{item.name}</span>
-            <span style={{ color: MUTED }}> — {item.issuer}, {item.date}</span>
+            {(item.issuer || item.date) && <span style={{ color: MUTED }}>{item.issuer && <> — {item.issuer}</>}{item.date && <>, {item.date}</>}</span>}
           </div>
         ))}
       </div>
@@ -241,6 +242,10 @@ function LegalSectionContent({ section, resume }: { section: any; resume: Resume
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic items fallback

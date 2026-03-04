@@ -156,6 +156,14 @@ export async function createSampleResume(userId: string) {
         ],
       },
     },
+    {
+      type: 'qr_codes',
+      title: '二维码',
+      sortOrder: 6,
+      content: {
+        items: [],
+      },
+    },
   ];
 
   for (const section of sections) {

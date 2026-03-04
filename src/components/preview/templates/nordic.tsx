@@ -3,6 +3,7 @@
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const SLATE_500 = '#64748b';
 const SLATE_400 = '#94a3b8';
@@ -162,7 +163,7 @@ function NordicSectionContent({ section, resume }: { section: any; resume: Resum
         {((content as CertificationsContent).items || []).map((item: any) => (
           <div key={item.id}>
             <span className="text-sm font-medium" style={{ color: SLATE_500 }}>{item.name}</span>
-            <span className="text-sm font-light" style={{ color: SLATE_400 }}> — {item.issuer} ({item.date})</span>
+            {(item.issuer || item.date) && <span className="text-sm font-light" style={{ color: SLATE_400 }}>{item.issuer && <> — {item.issuer}</>}{item.date && <> ({item.date})</>}</span>}
           </div>
         ))}
       </div>
@@ -217,6 +218,10 @@ function NordicSectionContent({ section, resume }: { section: any; resume: Resum
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic items fallback

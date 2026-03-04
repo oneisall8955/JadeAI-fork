@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 const PRIMARY = '#881337';
 const ACCENT = '#be185d';
@@ -68,7 +68,7 @@ function buildRoseSectionContent(section: Section, lang: string = 'en'): string 
 
   if (section.type === 'certifications') {
     return `<div class="flex flex-wrap gap-2">${((c as CertificationsContent).items || []).map((it: any) =>
-      `<div class="rounded-xl border px-4 py-2" style="border-color:${ROSE_100}"><p class="text-sm font-semibold" style="color:${PRIMARY}">${esc(it.name)}</p><p class="text-xs" style="color:${ACCENT}">${esc(it.issuer)}${it.date ? ` | ${esc(it.date)}` : ''}</p></div>`
+      `<div class="rounded-xl border px-4 py-2" style="border-color:${ROSE_100}"><p class="text-sm font-semibold" style="color:${PRIMARY}">${esc(it.name)}</p>${it.issuer || it.date ? `<p class="text-xs" style="color:${ACCENT}">${it.issuer ? esc(it.issuer) : ''}${it.issuer && it.date ? ' | ' : ''}${it.date ? esc(it.date) : ''}</p>` : ''}</div>`
     ).join('')}</div>`;
   }
 
@@ -85,6 +85,8 @@ function buildRoseSectionContent(section: Section, lang: string = 'en'): string 
       ${it.description ? `<p class="mt-0.5 text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
+
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
 
   if (c.items) {
     return `<div class="space-y-2">${c.items.map((it: any) => `<div class="rounded-xl border p-3" style="border-color:${ROSE_100}"><span class="text-sm font-medium" style="color:${PRIMARY}">${esc(it.name || it.title || it.language)}</span>${it.description ? `<p class="text-sm text-zinc-600">${esc(it.description)}</p>` : ''}</div>`).join('')}</div>`;

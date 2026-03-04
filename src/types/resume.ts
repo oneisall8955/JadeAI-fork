@@ -1,3 +1,9 @@
+export interface QrCodeItem {
+  id: string;
+  label: string;
+  url: string;
+}
+
 export interface PersonalInfoContent {
   fullName: string;
   jobTitle: string;
@@ -9,6 +15,10 @@ export interface PersonalInfoContent {
   github?: string;
   customLinks?: { label: string; url: string }[];
   avatar?: string;
+}
+
+export interface QrCodesContent {
+  items: QrCodeItem[];
 }
 
 export interface SummaryContent {
@@ -131,7 +141,8 @@ export type SectionContent =
   | CertificationsContent
   | LanguagesContent
   | CustomContent
-  | GitHubContent;
+  | GitHubContent
+  | QrCodesContent;
 
 export interface ResumeSection {
   id: string;

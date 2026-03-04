@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const BG = '#111827';
 const CYAN = '#22d3ee';
@@ -240,7 +241,7 @@ function NeonSectionContent({ section, resume }: { section: any; resume: Resume 
         {items.map((item: any) => (
           <div key={item.id} className="rounded-lg px-4 py-2" style={{ border: `1px solid ${VIOLET}30`, backgroundColor: `${VIOLET}08` }}>
             <p className="text-sm font-bold" style={{ color: CYAN }}>{item.name}</p>
-            <p className="text-xs" style={{ color: TEXT_DIM }}>{item.issuer}{item.date ? ` | ${item.date}` : ''}</p>
+            {(item.issuer || item.date) && <p className="text-xs" style={{ color: TEXT_DIM }}>{item.issuer}{item.issuer && item.date ? ' | ' : ''}{item.date}</p>}
           </div>
         ))}
       </div>
@@ -296,6 +297,10 @@ function NeonSectionContent({ section, resume }: { section: any; resume: Resume 
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

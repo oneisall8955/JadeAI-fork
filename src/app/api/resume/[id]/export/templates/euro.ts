@@ -5,7 +5,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, buildHighlights, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 function buildEuroSectionContent(s: Section, lang: string): string {
   const c = s.content as any;
@@ -78,6 +78,7 @@ function buildEuroSectionContent(s: Section, lang: string): string {
     </div>`).join('')}</div>`;
   }
 
+  if (s.type === 'qr_codes') return buildQrCodesHtml(s);
   if (c.items) {
     return `<div class="space-y-2">${c.items.map((it: any) => `<div>
       <span class="text-sm font-medium text-zinc-700">${esc(it.name || it.title || it.language)}</span>

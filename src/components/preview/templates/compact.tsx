@@ -3,6 +3,7 @@
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const LEFT_TYPES = new Set(['skills', 'languages', 'certifications', 'custom']);
 
@@ -95,7 +96,7 @@ function CompactLeftContent({ section }: { section: any }) {
         {((content as CertificationsContent).items || []).map((item: any) => (
           <div key={item.id}>
             <p className="text-[10px] font-semibold text-zinc-700">{item.name}</p>
-            <p className="text-[9px] text-zinc-400">{item.issuer}{item.date ? ` (${item.date})` : ''}</p>
+            {(item.issuer || item.date) && <p className="text-[9px] text-zinc-400">{item.issuer}{item.date ? ` (${item.date})` : ''}</p>}
           </div>
         ))}
       </div>
@@ -115,6 +116,10 @@ function CompactLeftContent({ section }: { section: any }) {
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   if (content.items) {
@@ -233,6 +238,10 @@ function CompactRightContent({ section, resume }: { section: any; resume: Resume
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   if (content.items) {

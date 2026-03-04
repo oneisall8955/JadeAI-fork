@@ -144,6 +144,7 @@ export function PersonalInfoSection({ section, onUpdate }: Props) {
         <EditableText label={t('location')} value={content.location} onChange={(v) => onUpdate({ location: v })} />
         <EditableText label={t('website')} value={content.website || ''} onChange={(v) => onUpdate({ website: v })} />
       </FieldWrapper>
+
     </div>
   );
 }

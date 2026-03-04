@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const DARK = '#0d1117';
 const BLUE = '#58a6ff';
@@ -54,8 +55,7 @@ export function CoderTemplate({ resume }: { resume: Resume }) {
               src={pi.avatar}
               avatarStyle={resume.themeConfig?.avatarStyle}
               size={80}
-              wrapperClassName="mb-3 overflow-hidden"
-              wrapperStyle={{ border: `2px solid ${BORDER}` }}
+              wrapperClassName="mx-auto mb-3 w-fit overflow-hidden"
             />
           )}
           <h1 className="text-lg font-bold" style={{ color: GREEN }}>{pi.fullName || 'Your Name'}</h1>
@@ -183,11 +183,15 @@ function CoderSidebarContent({ section }: { section: any }) {
         {items.map((item: any) => (
           <div key={item.id}>
             <p className="text-[10px] font-semibold" style={{ color: '#c9d1d9' }}>{item.name}</p>
-            <p className="text-[9px]" style={{ color: '#484f58' }}>{item.issuer}{item.date ? ` (${item.date})` : ''}</p>
+            {(item.issuer || item.date) && <p className="text-[9px]" style={{ color: '#484f58' }}>{item.issuer}{item.date ? ` (${item.date})` : ''}</p>}
           </div>
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback for sidebar
@@ -386,7 +390,7 @@ function CoderMainContent({ section, resume }: { section: any; resume: Resume })
         {items.map((item: any) => (
           <div key={item.id}>
             <span className="text-sm font-bold" style={{ color: DARK }}>{item.name}</span>
-            <span className="text-xs text-zinc-500">{' - '}{item.issuer}{item.date ? ` (${item.date})` : ''}</span>
+            {(item.issuer || item.date) && <span className="text-xs text-zinc-500">{item.issuer && <>{' - '}{item.issuer}</>}{item.date && <> ({item.date})</>}</span>}
           </div>
         ))}
       </div>
@@ -405,6 +409,10 @@ function CoderMainContent({ section, resume }: { section: any; resume: Resume })
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

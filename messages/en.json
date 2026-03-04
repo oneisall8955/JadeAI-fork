@@ -145,6 +145,7 @@
       "certifications": "Certifications",
       "languages": "Languages",
       "github": "GitHub Projects",
+      "qrCodes": "QR Codes",
       "custom": "Custom Section"
     },
     "fields": {
@@ -176,6 +177,15 @@
       "primaryLanguage": "Primary Language",
       "fetchRepo": "Fetch Repo Info",
       "fetchingRepo": "Fetching...",
+      "certName": "Certificate Name",
+      "issuer": "Issuer",
+      "certDate": "Date Obtained",
+      "qrCodes": "QR Codes",
+      "qrLabel": "Label",
+      "qrUrl": "URL",
+      "qrAutoGenerate": "Auto-detect",
+      "qrAdd": "Add QR Code",
+      "qrUrlInvalid": "Please enter a valid URL",
       "addItem": "Add Item",
       "removeItem": "Remove Item",
       "clear": "Clear",

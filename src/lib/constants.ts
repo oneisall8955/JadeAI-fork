@@ -10,6 +10,7 @@ export const SECTION_TYPES = [
   'certifications',
   'languages',
   'github',
+  'qr_codes',
   'custom',
 ] as const;
 
@@ -21,6 +22,7 @@ export const DEFAULT_SECTIONS: { type: SectionType; titleZh: string; titleEn: st
   { type: 'work_experience', titleZh: '工作经历', titleEn: 'Work Experience' },
   { type: 'education', titleZh: '教育背景', titleEn: 'Education' },
   { type: 'skills', titleZh: '技能特长', titleEn: 'Skills' },
+  { type: 'qr_codes', titleZh: '二维码', titleEn: 'QR Codes' },
 ];
 
 export const TEMPLATES = [
@@ -48,6 +50,13 @@ export const BACKGROUND_TEMPLATES: ReadonlySet<string> = new Set([
   'corporate', 'finance', 'gradient', 'material', 'coder',
   'artistic', 'neon', 'berlin', 'engineer', 'sidebar', 'ribbon',
 ]);
+
+/** Two-column templates with dark sidebar — sidebar bg + width for QR bar continuity */
+export const TWO_COLUMN_TEMPLATES: Record<string, { bg: string; width: string }> = {
+  'two-column': { bg: '#16213e', width: '35%' },
+  sidebar:      { bg: '#1e40af', width: '35%' },
+  coder:        { bg: '#0d1117', width: '32%' },
+};
 
 export const AUTOSAVE_DELAY = 500;
 export const MAX_UNDO_STACK = 50;

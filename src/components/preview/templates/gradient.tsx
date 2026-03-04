@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const GRADIENT = 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)';
 const ACCENT = '#a855f7';
@@ -226,7 +227,7 @@ function GradientSectionContent({ section, resume }: { section: any; resume: Res
         {items.map((item: any) => (
           <div key={item.id} className="flex items-baseline justify-between">
             <span className="text-sm font-semibold" style={{ color: ACCENT }}>{item.name}</span>
-            <span className="text-xs text-zinc-500">{item.issuer}{item.date ? ` | ${item.date}` : ''}</span>
+            {(item.issuer || item.date) && <span className="text-xs text-zinc-500">{item.issuer}{item.issuer && item.date ? ' | ' : ''}{item.date}</span>}
           </div>
         ))}
       </div>
@@ -281,6 +282,10 @@ function GradientSectionContent({ section, resume }: { section: any; resume: Res
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

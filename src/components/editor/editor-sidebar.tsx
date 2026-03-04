@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, GripVertical, User, FileText, Briefcase, GraduationCap, Wrench, FolderKanban, Award, Languages, LayoutList, Pencil, Github } from 'lucide-react';
+import { Plus, GripVertical, User, FileText, Briefcase, GraduationCap, Wrench, FolderKanban, Award, Languages, LayoutList, Pencil, Github, QrCode } from 'lucide-react';
 import { generateId } from '@/lib/utils';
 import {
   DndContext,
@@ -37,6 +37,7 @@ const sectionIcons: Record<string, React.ElementType> = {
   certifications: Award,
   languages: Languages,
   github: Github,
+  qr_codes: QrCode,
   custom: LayoutList,
 };
 
@@ -194,6 +195,7 @@ export function EditorSidebar({ sections, onAddSection, onReorderSections }: Edi
     certifications: t('sections.certifications'),
     languages: t('sections.languages'),
     github: t('sections.github'),
+    qr_codes: t('sections.qrCodes'),
     custom: t('sections.custom'),
   };
 

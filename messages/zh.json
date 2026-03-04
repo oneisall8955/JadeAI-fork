@@ -145,6 +145,7 @@
       "certifications": "资格证书",
       "languages": "语言能力",
       "github": "GitHub 项目",
+      "qrCodes": "二维码",
       "custom": "自定义模块"
     },
     "fields": {
@@ -176,6 +177,15 @@
       "primaryLanguage": "主要语言",
       "fetchRepo": "获取仓库信息",
       "fetchingRepo": "获取中...",
+      "certName": "证书名称",
+      "issuer": "颁发机构",
+      "certDate": "获得日期",
+      "qrCodes": "二维码",
+      "qrLabel": "标签",
+      "qrUrl": "链接",
+      "qrAutoGenerate": "自动检测",
+      "qrAdd": "添加二维码",
+      "qrUrlInvalid": "请输入有效的链接地址",
       "addItem": "添加条目",
       "removeItem": "删除条目",
       "clear": "清除",

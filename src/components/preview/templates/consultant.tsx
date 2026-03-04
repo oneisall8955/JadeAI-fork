@@ -3,6 +3,7 @@
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const GRAY_700 = '#374151';
 const BLUE_600 = '#2563eb';
@@ -176,7 +177,7 @@ function ConsultantSectionContent({ section, resume }: { section: any; resume: R
         {((content as CertificationsContent).items || []).map((item: any) => (
           <div key={item.id}>
             <span className="text-sm font-bold" style={{ color: GRAY_700 }}>{item.name}</span>
-            <span className="text-sm text-gray-500"> — {item.issuer} ({item.date})</span>
+            {(item.issuer || item.date) && <span className="text-sm text-gray-500">{item.issuer && <> — {item.issuer}</>}{item.date && <> ({item.date})</>}</span>}
           </div>
         ))}
       </div>
@@ -231,6 +232,10 @@ function ConsultantSectionContent({ section, resume }: { section: any; resume: R
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic items fallback

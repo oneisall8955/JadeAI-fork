@@ -22,12 +22,14 @@ async function getBrowser() {
     });
   }
 
-  // Vercel serverless: use @sparticuz/chromium bundled binary
+  // Vercel serverless: use @sparticuz/chromium-min (downloads binary at runtime)
   if (process.env.VERCEL) {
-    const chromium = await import('@sparticuz/chromium');
+    const chromium = await import('@sparticuz/chromium-min');
     return puppeteer.launch({
       args: chromium.default.args,
-      executablePath: await chromium.default.executablePath(),
+      executablePath: await chromium.default.executablePath(
+        'https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar',
+      ),
       headless: true,
     });
   }
@@ -235,6 +237,9 @@ export async function generatePdf(html: string, options: PdfOptions = {}): Promi
   try {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0', timeout: 15000 });
+
+    // Wait for web fonts (e.g. Noto Sans SC) to finish loading
+    await page.evaluate(() => document.fonts.ready);
 
     if (options.fitOnePage) {
       await fitContentToOnePage(page);

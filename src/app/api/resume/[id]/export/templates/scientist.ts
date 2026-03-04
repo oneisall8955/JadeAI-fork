@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 import { buildClassicSectionContent } from './classic';
 
 const PRIMARY = '#0f172a';
@@ -59,7 +59,7 @@ function buildScientistSectionContent(section: Section, sectionIdx: number, lang
 
   if (section.type === 'certifications') {
     return `<div class="space-y-1.5">${((c as CertificationsContent).items || []).map((it: any, idx: number) =>
-      `<div class="text-sm"><span class="text-xs font-bold" style="color:${ACCENT}">[${idx + 1}]</span><span class="ml-1.5 font-medium" style="color:${PRIMARY}">${esc(it.name)}</span><span style="color:${MUTED}">, ${esc(it.issuer)}, ${esc(it.date)}</span></div>`
+      `<div class="text-sm"><span class="text-xs font-bold" style="color:${ACCENT}">[${idx + 1}]</span><span class="ml-1.5 font-medium" style="color:${PRIMARY}">${esc(it.name)}</span><span style="color:${MUTED}">${it.issuer ? `, ${esc(it.issuer)}` : ''}${it.date ? `, ${esc(it.date)}` : ''}</span></div>`
     ).join('')}</div>`;
   }
 
@@ -75,6 +75,16 @@ function buildScientistSectionContent(section: Section, sectionIdx: number, lang
       ${it.description ? `<p class="mt-0.5 pl-6 text-sm" style="color:${BODY_TEXT}">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
+
+  if (section.type === 'github') {
+    return `<div class="space-y-3">${((c as GitHubContent).items || []).map((it: any, idx: number) => `<div>
+      <div class="flex items-baseline justify-between"><div><span class="text-xs font-bold" style="color:${ACCENT}">[${idx + 1}]</span><span class="ml-1.5 text-sm font-bold" style="color:${PRIMARY}">${esc(it.name)}</span></div><span class="shrink-0 text-xs" style="color:${MUTED}">\u2B50 ${it.stars?.toLocaleString() ?? 0}</span></div>
+      ${it.language ? `<span class="pl-6 text-xs italic" style="color:${ACCENT}">${esc(it.language)}</span>` : ''}
+      ${it.description ? `<p class="mt-0.5 pl-6 text-sm" style="color:${BODY_TEXT}">${esc(it.description)}</p>` : ''}
+    </div>`).join('')}</div>`;
+  }
+
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
 
   // Generic items fallback
   if (c.items) {

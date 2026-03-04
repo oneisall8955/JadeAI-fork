@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 import { buildClassicSectionContent } from './classic';
 
 const PRIMARY = '#9a3412';
@@ -60,7 +60,7 @@ function buildTeacherSectionContent(section: Section, lang: string = 'en'): stri
 
   if (section.type === 'certifications') {
     return `<div class="space-y-1.5">${((c as CertificationsContent).items || []).map((it: any) =>
-      `<div class="flex items-center gap-2"><span class="h-1.5 w-1.5 shrink-0 rounded-full" style="background-color:${ACCENT}"></span><span class="text-sm font-medium" style="color:${PRIMARY}">${esc(it.name)}</span><span class="text-sm" style="color:${MUTED}"> — ${esc(it.issuer)} (${esc(it.date)})</span></div>`
+      `<div class="flex items-center gap-2"><span class="h-1.5 w-1.5 shrink-0 rounded-full" style="background-color:${ACCENT}"></span><span class="text-sm font-medium" style="color:${PRIMARY}">${esc(it.name)}</span>${it.issuer ? `<span class="text-sm" style="color:${MUTED}"> — ${esc(it.issuer)}</span>` : ''}${it.date ? `<span class="text-sm" style="color:${MUTED}"> (${esc(it.date)})</span>` : ''}</div>`
     ).join('')}</div>`;
   }
 
@@ -84,6 +84,8 @@ function buildTeacherSectionContent(section: Section, lang: string = 'en'): stri
       ${it.description ? `<p class="mt-1 text-sm" style="color:${BODY_TEXT}">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
+
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
 
   // Generic items fallback
   if (c.items) {

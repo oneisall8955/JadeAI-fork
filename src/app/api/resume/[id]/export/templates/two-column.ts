@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, buildHighlights, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 export function buildTwoColumnLeftContent(section: Section): string {
   const c = section.content as any;
@@ -26,7 +26,7 @@ export function buildTwoColumnLeftContent(section: Section): string {
   }
   if (section.type === 'certifications') {
     return `<div class="space-y-1.5">${((c as CertificationsContent).items || []).map((it: any) =>
-      `<div><p class="text-xs font-semibold text-zinc-200">${esc(it.name)}</p><p class="text-[10px] text-zinc-400">${esc(it.issuer)}${it.date ? ` (${esc(it.date)})` : ''}</p></div>`
+      `<div><p class="text-xs font-semibold text-zinc-200">${esc(it.name)}</p>${it.issuer || it.date ? `<p class="text-[10px] text-zinc-400">${it.issuer ? esc(it.issuer) : ''}${it.date ? ` (${esc(it.date)})` : ''}</p>` : ''}</div>`
     ).join('')}</div>`;
   }
   if (section.type === 'custom') {
@@ -34,6 +34,7 @@ export function buildTwoColumnLeftContent(section: Section): string {
       `<div><p class="text-xs font-semibold text-zinc-200">${esc(it.title)}</p>${it.subtitle ? `<p class="text-[10px] text-zinc-400">${esc(it.subtitle)}</p>` : ''}${it.description ? `<p class="text-[10px] text-zinc-400">${esc(it.description)}</p>` : ''}</div>`
     ).join('')}</div>`;
   }
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
   if (c.items) {
     return `<div class="space-y-1.5">${c.items.map((it: any) => `<div><span class="text-xs font-medium text-zinc-200">${esc(it.name || it.title || it.language)}</span>${it.description ? `<p class="text-[10px] text-zinc-400">${esc(it.description)}</p>` : ''}</div>`).join('')}</div>`;
   }
@@ -91,6 +92,7 @@ function buildTwoColumnRightContent(section: Section, lang: string): string {
       ${it.description ? `<p class="text-sm text-zinc-600">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
   if (c.items) {
     return `<div class="space-y-2">${c.items.map((it: any) => `<div><span class="text-sm font-medium text-zinc-700">${esc(it.name || it.title || it.language)}</span>${it.description ? `<p class="text-sm text-zinc-600">${esc(it.description)}</p>` : ''}</div>`).join('')}</div>`;
   }
@@ -108,7 +110,7 @@ export function buildTwoColumnHtml(resume: ResumeWithSections): string {
   return `<div class="mx-auto flex max-w-[210mm] overflow-hidden bg-white shadow-lg" style="font-family:Inter,sans-serif;min-height:297mm">
     <div class="w-[35%] shrink-0 p-6 text-white" style="background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%)">
       <div class="mb-6 text-center">
-        ${pi.avatar ? `<div class="mx-auto mb-3 h-24 w-24 overflow-hidden rounded-full border-[3px] border-white/20"><img src="${esc(pi.avatar)}" alt="" class="h-full w-full object-cover"/></div>` : ''}
+        ${pi.avatar ? `<div class="mx-auto mb-3 h-24 w-24 overflow-hidden rounded-full"><img src="${esc(pi.avatar)}" alt="" class="h-full w-full object-cover"/></div>` : ''}
         <h1 class="text-xl font-bold tracking-tight text-white">${esc(pi.fullName || 'Your Name')}</h1>
         ${pi.jobTitle ? `<p class="mt-1 text-sm font-light text-zinc-300">${esc(pi.jobTitle)}</p>` : ''}
       </div>

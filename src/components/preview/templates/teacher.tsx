@@ -3,6 +3,7 @@
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, GitHubContent, CustomContent } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const PRIMARY = '#9a3412';
 const ACCENT = '#ea580c';
@@ -209,7 +210,7 @@ function TeacherSectionContent({ section, resume }: { section: any; resume: Resu
           <div key={item.id} className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: ACCENT }} />
             <span className="text-sm font-medium" style={{ color: PRIMARY }}>{item.name}</span>
-            <span className="text-sm" style={{ color: MUTED }}> — {item.issuer} ({item.date})</span>
+            {(item.issuer || item.date) && <span className="text-sm" style={{ color: MUTED }}>{item.issuer && <> — {item.issuer}</>}{item.date && <> ({item.date})</>}</span>}
           </div>
         ))}
       </div>
@@ -268,6 +269,10 @@ function TeacherSectionContent({ section, resume }: { section: any; resume: Resu
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic items fallback

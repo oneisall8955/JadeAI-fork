@@ -15,6 +15,7 @@ import type {
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
 import { isSectionEmpty } from '../utils';
+import { QrCodesPreview } from '../qr-codes-preview';
 
 const SIDEBAR_BG = '#1e40af';
 const ACCENT = '#3b82f6';
@@ -44,7 +45,7 @@ export function SidebarTemplate({ resume }: { resume: Resume }) {
               src={pi.avatar}
               size={80}
               avatarStyle={resume.themeConfig?.avatarStyle}
-              wrapperClassName="mx-auto mb-3 overflow-hidden rounded-lg border-2 border-white/20"
+              wrapperClassName="mx-auto mb-3 w-fit overflow-hidden"
             />
           )}
           <h1 className="text-xl font-bold tracking-tight text-white">{pi.fullName || 'Your Name'}</h1>
@@ -161,7 +162,7 @@ function SidebarSectionContent({ section }: { section: any }) {
         {items.map((item: any) => (
           <div key={item.id}>
             <p className="text-xs font-semibold text-blue-100">{item.name}</p>
-            <p className="text-[10px] text-blue-300">{item.issuer}{item.date ? ` (${item.date})` : ''}</p>
+            {(item.issuer || item.date) && <p className="text-[10px] text-blue-300">{item.issuer}{item.date ? ` (${item.date})` : ''}</p>}
           </div>
         ))}
       </div>
@@ -181,6 +182,10 @@ function SidebarSectionContent({ section }: { section: any }) {
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback
@@ -385,6 +390,10 @@ function MainSectionContent({ section, resume }: { section: any; resume: Resume 
         ))}
       </div>
     );
+  }
+
+  if (section.type === 'qr_codes') {
+    return <QrCodesPreview items={(content as any).items || []} />;
   }
 
   // Generic fallback

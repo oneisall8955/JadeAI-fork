@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 const NAVY = '#0f172a';
 const BLUE = '#2563eb';
@@ -55,7 +55,7 @@ function buildCorporateSectionContent(section: Section, lang: string): string {
 
   if (section.type === 'certifications') {
     return `<div class="space-y-1.5">${((c as CertificationsContent).items || []).map((it: any) =>
-      `<div><span class="text-sm font-bold" style="color:${NAVY}">${esc(it.name)}</span><span class="text-sm text-slate-600"> — ${esc(it.issuer)} (${esc(it.date)})</span></div>`
+      `<div><span class="text-sm font-bold" style="color:${NAVY}">${esc(it.name)}</span><span class="text-sm text-slate-600">${it.issuer ? ` — ${esc(it.issuer)}` : ''}${it.date ? ` (${esc(it.date)})` : ''}</span></div>`
     ).join('')}</div>`;
   }
 
@@ -79,6 +79,8 @@ function buildCorporateSectionContent(section: Section, lang: string): string {
       ${it.description ? `<p class="mt-0.5 text-sm text-slate-600">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
+
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
 
   // Generic items fallback
   if (c.items) {

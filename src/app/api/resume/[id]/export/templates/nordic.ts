@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, getPersonalInfo, visibleSections, type ResumeWithSections, type Section } from '../utils';
+import { esc, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 const SLATE_500 = '#64748b';
 const SLATE_400 = '#94a3b8';
@@ -56,7 +56,7 @@ function buildNordicSectionContent(section: Section, lang: string): string {
 
   if (section.type === 'certifications') {
     return `<div class="space-y-1.5">${((c as CertificationsContent).items || []).map((it: any) =>
-      `<div><span class="text-sm font-medium" style="color:${SLATE_500}">${esc(it.name)}</span><span class="text-sm font-light" style="color:${SLATE_400}"> — ${esc(it.issuer)} (${esc(it.date)})</span></div>`
+      `<div><span class="text-sm font-medium" style="color:${SLATE_500}">${esc(it.name)}</span>${it.issuer ? `<span class="text-sm font-light" style="color:${SLATE_400}"> — ${esc(it.issuer)}</span>` : ''}${it.date ? `<span class="text-sm font-light" style="color:${SLATE_400}"> (${esc(it.date)})</span>` : ''}</div>`
     ).join('')}</div>`;
   }
 
@@ -80,6 +80,8 @@ function buildNordicSectionContent(section: Section, lang: string): string {
       ${it.description ? `<p class="mt-0.5 text-sm font-light" style="color:${SLATE_500}">${esc(it.description)}</p>` : ''}
     </div>`).join('')}</div>`;
   }
+
+  if (section.type === 'qr_codes') return buildQrCodesHtml(section);
 
   // Generic items fallback
   if (c.items) {
