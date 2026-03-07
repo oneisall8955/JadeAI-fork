@@ -1,7 +1,7 @@
 'use client';
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { AvatarImage } from '../avatar-image';
 import { QrCodesPreview } from '../qr-codes-preview';
 
@@ -25,10 +25,21 @@ export function FormalTemplate({ resume }: { resume: Resume }) {
           </div>
         </div>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-zinc-500">
+          {pi.age && <span>{pi.age}</span>}
+          {pi.politicalStatus && <span>{pi.politicalStatus}</span>}
+          {pi.gender && <span>{pi.gender}</span>}
+          {pi.ethnicity && <span>{pi.ethnicity}</span>}
+          {pi.hometown && <span>{pi.hometown}</span>}
+          {pi.maritalStatus && <span>{pi.maritalStatus}</span>}
+          {pi.yearsOfExperience && <span>{pi.yearsOfExperience}</span>}
+          {pi.educationLevel && <span>{pi.educationLevel}</span>}
           {pi.email && <span>{pi.email}</span>}
           {pi.phone && <span>{pi.phone}</span>}
+          {pi.wechat && <span>{pi.wechat}</span>}
           {pi.location && <span>{pi.location}</span>}
           {pi.website && <span>{pi.website}</span>}
+          {pi.linkedin && <span>LinkedIn: {pi.linkedin}</span>}
+          {pi.github && <span>GitHub: {pi.github}</span>}
         </div>
       </div>
 
@@ -93,7 +104,7 @@ function FormalSectionContent({ section, resume }: { section: any; resume: Resum
               </div>
               <span className="shrink-0 text-xs italic text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
-            <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
+            <p className="text-sm text-zinc-600">{degreeField(item.degree, item.field)}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-5">

@@ -18,7 +18,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const SYSTEM_PROMPT = `You are a resume parser. Extract ALL information from the resume into the EXACT JSON schema below.
 
 REQUIRED JSON SCHEMA:
-{"personalInfo":{"fullName":"","jobTitle":"","email":"","phone":"","location":"","website":"","linkedin":"","github":""},"summary":"","workExperience":[{"company":"Company A","position":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM or null","current":false,"description":"","highlights":["bullet 1","bullet 2"]},{"company":"Company B","position":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","current":false,"description":"","highlights":[]}],"education":[{"institution":"University A","degree":"","field":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","gpa":"","highlights":[]},{"institution":"University B","degree":"","field":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","gpa":"","highlights":[]}],"skills":[{"name":"category name","skills":["skill1","skill2"]}],"projects":[{"name":"Project A","description":"","technologies":[],"highlights":[]},{"name":"Project B","description":"","technologies":[],"highlights":[]}],"certifications":[{"name":"","issuer":"","date":""}],"languages":[{"language":"","proficiency":""}]}
+{"personalInfo":{"fullName":"","jobTitle":"","age":"","gender":"","politicalStatus":"","ethnicity":"","hometown":"","maritalStatus":"","yearsOfExperience":"","educationLevel":"","email":"","phone":"","wechat":"","location":"","website":"","linkedin":"","github":""},"summary":"","workExperience":[{"company":"Company A","position":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM or null","current":false,"description":"","highlights":["bullet 1","bullet 2"]},{"company":"Company B","position":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","current":false,"description":"","highlights":[]}],"education":[{"institution":"University A","degree":"","field":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","gpa":"","highlights":[]},{"institution":"University B","degree":"","field":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","gpa":"","highlights":[]}],"skills":[{"name":"category name","skills":["skill1","skill2"]}],"projects":[{"name":"Project A","description":"","technologies":[],"highlights":[]},{"name":"Project B","description":"","technologies":[],"highlights":[]}],"certifications":[{"name":"","issuer":"","date":""}],"languages":[{"language":"","proficiency":""}]}
 
 RULES:
 - You MUST use the EXACT field names shown above (fullName, jobTitle, workExperience, etc.)
@@ -287,8 +287,17 @@ function mapToResumeSchema(raw: Record<string, unknown>): ParsedResume {
   const personalInfo = {
     fullName: str(pi.fullName || pi.name || pi.姓名 || ''),
     jobTitle: str(pi.jobTitle || pi.title || pi.position || ji.position || ji.jobTitle || pi.职位 || ''),
+    age: str(pi.age || pi.年龄 || ''),
+    gender: str(pi.gender || pi.sex || pi.性别 || ''),
+    politicalStatus: str(pi.politicalStatus || pi.political_status || pi.政治面貌 || ''),
+    ethnicity: str(pi.ethnicity || pi.nationality || pi.民族 || ''),
+    hometown: str(pi.hometown || pi.nativePlace || pi.native_place || pi.籍贯 || ''),
+    maritalStatus: str(pi.maritalStatus || pi.marital_status || pi.婚姻状况 || pi.婚姻 || ''),
+    yearsOfExperience: str(pi.yearsOfExperience || pi.years_of_experience || pi.experience || pi.工作年限 || pi.工作经验 || ''),
+    educationLevel: str(pi.educationLevel || pi.education_level || pi.education || pi.最高学历 || pi.学历 || ''),
     email: str(pi.email || pi.邮箱 || ''),
     phone: str(pi.phone || pi.tel || pi.mobile || pi.电话 || pi.手机 || ''),
+    wechat: str(pi.wechat || pi.weixin || pi.微信 || ''),
     location: str(pi.location || pi.city || pi.address || ji.city || pi.地址 || pi.城市 || ''),
     website: str(pi.website || pi.url || pi.homepage || ''),
     linkedin: str(pi.linkedin || ''),
@@ -436,8 +445,17 @@ function buildSections(parsed: ParsedResume, language: string) {
     content: {
       fullName: parsed.personalInfo?.fullName || '',
       jobTitle: parsed.personalInfo?.jobTitle || '',
+      age: parsed.personalInfo?.age || '',
+      gender: parsed.personalInfo?.gender || '',
+      politicalStatus: parsed.personalInfo?.politicalStatus || '',
+      ethnicity: parsed.personalInfo?.ethnicity || '',
+      hometown: parsed.personalInfo?.hometown || '',
+      maritalStatus: parsed.personalInfo?.maritalStatus || '',
+      yearsOfExperience: parsed.personalInfo?.yearsOfExperience || '',
+      educationLevel: parsed.personalInfo?.educationLevel || '',
       email: parsed.personalInfo?.email || '',
       phone: parsed.personalInfo?.phone || '',
+      wechat: parsed.personalInfo?.wechat || '',
       location: parsed.personalInfo?.location || '',
       website: parsed.personalInfo?.website || '',
       linkedin: parsed.personalInfo?.linkedin || '',

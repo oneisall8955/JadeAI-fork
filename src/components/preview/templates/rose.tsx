@@ -14,7 +14,7 @@ import type {
   GitHubContent,
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { QrCodesPreview } from '../qr-codes-preview';
 
 const PRIMARY = '#881337';
@@ -44,10 +44,21 @@ export function RoseTemplate({ resume }: { resume: Resume }) {
           <span className="h-1 w-1 rounded-full" style={{ backgroundColor: ACCENT, opacity: 0.4 }} />
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs" style={{ color: ACCENT }}>
+          {pi.age && <span>{pi.age}</span>}
+          {pi.politicalStatus && <span>{pi.politicalStatus}</span>}
+          {pi.gender && <span>{pi.gender}</span>}
+          {pi.ethnicity && <span>{pi.ethnicity}</span>}
+          {pi.hometown && <span>{pi.hometown}</span>}
+          {pi.maritalStatus && <span>{pi.maritalStatus}</span>}
+          {pi.yearsOfExperience && <span>{pi.yearsOfExperience}</span>}
+          {pi.educationLevel && <span>{pi.educationLevel}</span>}
           {pi.email && <span>{pi.email}</span>}
           {pi.phone && <span>{pi.phone}</span>}
+          {pi.wechat && <span>{pi.wechat}</span>}
           {pi.location && <span>{pi.location}</span>}
           {pi.website && <span>{pi.website}</span>}
+          {pi.linkedin && <span>LinkedIn: {pi.linkedin}</span>}
+          {pi.github && <span>GitHub: {pi.github}</span>}
         </div>
       </div>
 
@@ -120,7 +131,7 @@ function RoseSectionContent({ section, resume }: { section: any; resume: Resume 
         {((content as EducationContent).items || []).map((item: any) => (
           <div key={item.id} className="rounded-xl border p-4" style={{ borderColor: ROSE_100 }}>
             <div className="flex items-baseline justify-between">
-              <h3 className="text-sm font-semibold" style={{ color: PRIMARY }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</h3>
+              <h3 className="text-sm font-semibold" style={{ color: PRIMARY }}>{degreeField(item.degree, item.field)}</h3>
               <span className="shrink-0 text-xs" style={{ color: ACCENT }}>{item.startDate} &ndash; {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.institution && <p className="text-sm" style={{ color: ACCENT }}>{item.institution}</p>}

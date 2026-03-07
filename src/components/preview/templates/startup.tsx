@@ -2,7 +2,7 @@
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { QrCodesPreview } from '../qr-codes-preview';
 
 const PURPLE = '#6366f1';
@@ -25,8 +25,17 @@ export function StartupTemplate({ resume }: { resume: Resume }) {
             <h1 className="text-3xl font-extrabold tracking-tight">{pi.fullName || 'Your Name'}</h1>
             {pi.jobTitle && <p className="mt-1 text-base font-light text-white/80">{pi.jobTitle}</p>}
             <div className="mt-2 flex flex-wrap gap-2 text-sm text-white/70">
+              {pi.age && <span>{pi.age}</span>}
+              {pi.politicalStatus && <span>{pi.politicalStatus}</span>}
+              {pi.gender && <span>{pi.gender}</span>}
+              {pi.ethnicity && <span>{pi.ethnicity}</span>}
+              {pi.hometown && <span>{pi.hometown}</span>}
+              {pi.maritalStatus && <span>{pi.maritalStatus}</span>}
+              {pi.yearsOfExperience && <span>{pi.yearsOfExperience}</span>}
+              {pi.educationLevel && <span>{pi.educationLevel}</span>}
               {pi.email && <span>{pi.email}</span>}
               {pi.phone && <span>{pi.phone}</span>}
+              {pi.wechat && <span>{pi.wechat}</span>}
               {pi.location && <span>{pi.location}</span>}
               {pi.website && <span>{pi.website}</span>}
             </div>
@@ -95,7 +104,7 @@ function StartupSectionContent({ section, resume }: { section: any; resume: Resu
           <div key={item.id}>
             <div className="flex items-baseline justify-between">
               <div>
-                <span className="text-sm font-bold text-zinc-800">{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
+                <span className="text-sm font-bold text-zinc-800">{degreeField(item.degree, item.field)}</span>
                 {item.institution && <span className="text-sm text-zinc-500"> — {item.institution}</span>}
               </div>
               <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>

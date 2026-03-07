@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, md, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
+import { esc, md, degreeField, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 const SIDEBAR_BG = '#1e40af';
 const ACCENT = '#3b82f6';
@@ -61,7 +61,7 @@ function buildSidebarMainContent(section: Section, lang: string = 'en'): string 
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div>
       <div class="flex items-baseline justify-between"><span class="text-sm font-semibold text-zinc-800">${esc(it.institution)}</span><span class="shrink-0 text-xs text-zinc-400">${esc(it.startDate)} – ${esc(it.endDate) || (lang === 'zh' ? '至今' : 'Present')}</span></div>
-      <p class="text-sm text-zinc-600">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</p>
+      <p class="text-sm text-zinc-600">${esc(degreeField(it.degree, it.field))}</p>
       ${it.gpa ? `<p class="text-xs text-zinc-500">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-4">${buildHighlights(it.highlights, 'text-sm text-zinc-600')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -125,8 +125,17 @@ export function buildSidebarHtml(resume: ResumeWithSections): string {
         ${pi.jobTitle ? `<p class="mt-1 text-sm font-light text-blue-200">${esc(pi.jobTitle)}</p>` : ''}
       </div>
       <div class="mb-6 space-y-1.5 text-xs">
+        ${pi.age ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Age:</span><span>${esc(pi.age)}</span></div>` : ''}
+        ${pi.gender ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Gender:</span><span>${esc(pi.gender)}</span></div>` : ''}
+        ${pi.politicalStatus ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Political:</span><span>${esc(pi.politicalStatus)}</span></div>` : ''}
+        ${pi.ethnicity ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Ethnicity:</span><span>${esc(pi.ethnicity)}</span></div>` : ''}
+        ${pi.hometown ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Hometown:</span><span>${esc(pi.hometown)}</span></div>` : ''}
+        ${pi.maritalStatus ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Marital:</span><span>${esc(pi.maritalStatus)}</span></div>` : ''}
+        ${pi.yearsOfExperience ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Experience:</span><span>${esc(pi.yearsOfExperience)}</span></div>` : ''}
+        ${pi.educationLevel ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Education:</span><span>${esc(pi.educationLevel)}</span></div>` : ''}
         ${pi.email ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Email:</span><span class="break-all">${esc(pi.email)}</span></div>` : ''}
         ${pi.phone ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Phone:</span><span>${esc(pi.phone)}</span></div>` : ''}
+        ${pi.wechat ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">WeChat:</span><span>${esc(pi.wechat)}</span></div>` : ''}
         ${pi.location ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Location:</span><span>${esc(pi.location)}</span></div>` : ''}
         ${pi.website ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">Web:</span><span class="break-all">${esc(pi.website)}</span></div>` : ''}
         ${pi.linkedin ? `<div class="flex items-start gap-2 text-blue-100"><span class="shrink-0 text-blue-300">LinkedIn:</span><span class="break-all">${esc(pi.linkedin)}</span></div>` : ''}

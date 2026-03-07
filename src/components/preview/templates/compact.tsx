@@ -2,7 +2,7 @@
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
-import { isSectionEmpty, md } from '../utils';
+import { isSectionEmpty, md, degreeField } from '../utils';
 import { QrCodesPreview } from '../qr-codes-preview';
 
 const LEFT_TYPES = new Set(['skills', 'languages', 'certifications', 'custom']);
@@ -27,8 +27,17 @@ export function CompactTemplate({ resume }: { resume: Resume }) {
             <h1 className="text-xl font-bold text-zinc-900">{pi.fullName || 'Your Name'}</h1>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500">
               {pi.jobTitle && <span className="font-medium text-zinc-700">{pi.jobTitle}</span>}
+              {pi.age && <><span className="text-zinc-300">|</span><span>{pi.age}</span></>}
+              {pi.politicalStatus && <><span className="text-zinc-300">|</span><span>{pi.politicalStatus}</span></>}
+              {pi.gender && <><span className="text-zinc-300">|</span><span>{pi.gender}</span></>}
+              {pi.ethnicity && <><span className="text-zinc-300">|</span><span>{pi.ethnicity}</span></>}
+              {pi.hometown && <><span className="text-zinc-300">|</span><span>{pi.hometown}</span></>}
+              {pi.maritalStatus && <><span className="text-zinc-300">|</span><span>{pi.maritalStatus}</span></>}
+              {pi.yearsOfExperience && <><span className="text-zinc-300">|</span><span>{pi.yearsOfExperience}</span></>}
+              {pi.educationLevel && <><span className="text-zinc-300">|</span><span>{pi.educationLevel}</span></>}
               {pi.email && <><span className="text-zinc-300">|</span><span>{pi.email}</span></>}
               {pi.phone && <><span className="text-zinc-300">|</span><span>{pi.phone}</span></>}
+              {pi.wechat && <><span className="text-zinc-300">|</span><span>{pi.wechat}</span></>}
               {pi.location && <><span className="text-zinc-300">|</span><span>{pi.location}</span></>}
               {pi.website && <><span className="text-zinc-300">|</span><span>{pi.website}</span></>}
             </div>
@@ -180,7 +189,7 @@ function CompactRightContent({ section, resume }: { section: any; resume: Resume
           <div key={item.id}>
             <div className="flex items-baseline justify-between">
               <div>
-                <span className="text-xs font-bold text-zinc-800">{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
+                <span className="text-xs font-bold text-zinc-800">{degreeField(item.degree, item.field)}</span>
                 {item.institution && <span className="text-xs text-zinc-500"> — {item.institution}</span>}
                 {item.location && <span className="text-xs text-zinc-400">, {item.location}</span>}
               </div>

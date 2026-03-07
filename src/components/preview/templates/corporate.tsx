@@ -2,7 +2,7 @@
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { QrCodesPreview } from '../qr-codes-preview';
 
 const NAVY = '#0f172a';
@@ -30,8 +30,17 @@ export function CorporateTemplate({ resume }: { resume: Resume }) {
             <h1 className="text-3xl font-bold tracking-tight text-white">{pi.fullName || 'Your Name'}</h1>
             {pi.jobTitle && <p className="mt-1 text-base font-light" style={{ color: BLUE }}>{pi.jobTitle}</p>}
             <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-400">
+              {pi.age && <span>{pi.age}</span>}
+              {pi.politicalStatus && <span>{pi.politicalStatus}</span>}
+              {pi.gender && <span>{pi.gender}</span>}
+              {pi.ethnicity && <span>{pi.ethnicity}</span>}
+              {pi.hometown && <span>{pi.hometown}</span>}
+              {pi.maritalStatus && <span>{pi.maritalStatus}</span>}
+              {pi.yearsOfExperience && <span>{pi.yearsOfExperience}</span>}
+              {pi.educationLevel && <span>{pi.educationLevel}</span>}
               {pi.email && <span>{pi.email}</span>}
               {pi.phone && <span>{pi.phone}</span>}
+              {pi.wechat && <span>{pi.wechat}</span>}
               {pi.location && <span>{pi.location}</span>}
               {pi.website && <span>{pi.website}</span>}
             </div>
@@ -102,7 +111,7 @@ function CorporateSectionContent({ section, resume }: { section: any; resume: Re
           <div key={item.id}>
             <div className="flex items-baseline justify-between">
               <div>
-                <span className="text-sm font-bold" style={{ color: NAVY }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</span>
+                <span className="text-sm font-bold" style={{ color: NAVY }}>{degreeField(item.degree, item.field)}</span>
                 {item.institution && <span className="text-sm text-slate-600"> - {item.institution}</span>}
                 {item.location && <span className="text-sm text-slate-400">, {item.location}</span>}
               </div>

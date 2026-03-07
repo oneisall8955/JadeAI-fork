@@ -14,7 +14,7 @@ import type {
   GitHubContent,
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { QrCodesPreview } from '../qr-codes-preview';
 
 const DARK = '#0d1117';
@@ -68,6 +68,54 @@ export function CoderTemplate({ resume }: { resume: Resume }) {
 
         {/* Contact */}
         <div className="mb-5 space-y-1.5 text-[11px]" style={{ borderTop: `1px solid ${BORDER}`, paddingTop: '12px' }}>
+          {pi.age && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.age}</span>
+            </div>
+          )}
+          {pi.politicalStatus && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.politicalStatus}</span>
+            </div>
+          )}
+          {pi.gender && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.gender}</span>
+            </div>
+          )}
+          {pi.ethnicity && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.ethnicity}</span>
+            </div>
+          )}
+          {pi.hometown && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.hometown}</span>
+            </div>
+          )}
+          {pi.maritalStatus && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.maritalStatus}</span>
+            </div>
+          )}
+          {pi.yearsOfExperience && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.yearsOfExperience}</span>
+            </div>
+          )}
+          {pi.educationLevel && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.educationLevel}</span>
+            </div>
+          )}
           {pi.email && (
             <div className="flex items-start gap-2">
               <span style={{ color: GREEN }}>$</span>
@@ -78,6 +126,12 @@ export function CoderTemplate({ resume }: { resume: Resume }) {
             <div className="flex items-start gap-2">
               <span style={{ color: GREEN }}>$</span>
               <span style={{ color: '#8b949e' }}>{pi.phone}</span>
+            </div>
+          )}
+          {pi.wechat && (
+            <div className="flex items-start gap-2">
+              <span style={{ color: GREEN }}>$</span>
+              <span style={{ color: '#8b949e' }}>{pi.wechat}</span>
             </div>
           )}
           {pi.location && (
@@ -271,7 +325,7 @@ function CoderMainContent({ section, resume }: { section: any; resume: Resume })
               <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
             <p className="text-sm text-zinc-600">
-              {item.degree}{item.field ? ` in ${item.field}` : ''}
+              {degreeField(item.degree, item.field)}
               {item.location && <span className="text-zinc-400">, {item.location}</span>}
             </p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}

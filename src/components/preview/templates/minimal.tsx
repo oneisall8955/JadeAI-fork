@@ -1,7 +1,7 @@
 'use client';
 
 import type { Resume, PersonalInfoContent, SummaryContent, WorkExperienceContent, EducationContent, SkillsContent, ProjectsContent, CertificationsContent, LanguagesContent, CustomContent, GitHubContent } from '@/types/resume';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { AvatarImage } from '../avatar-image';
 import { QrCodesPreview } from '../qr-codes-preview';
 
@@ -21,9 +21,20 @@ export function MinimalTemplate({ resume }: { resume: Resume }) {
             <h1 className="text-xl font-medium text-zinc-900">{pi.fullName || 'Your Name'}</h1>
             <div className="mt-1 flex flex-wrap gap-3 text-sm text-zinc-500">
               {pi.jobTitle && <span>{pi.jobTitle}</span>}
+              {pi.age && <span>{pi.age}</span>}
+              {pi.politicalStatus && <span>{pi.politicalStatus}</span>}
+              {pi.gender && <span>{pi.gender}</span>}
+              {pi.ethnicity && <span>{pi.ethnicity}</span>}
+              {pi.hometown && <span>{pi.hometown}</span>}
+              {pi.maritalStatus && <span>{pi.maritalStatus}</span>}
+              {pi.yearsOfExperience && <span>{pi.yearsOfExperience}</span>}
+              {pi.educationLevel && <span>{pi.educationLevel}</span>}
               {pi.email && <span>{pi.email}</span>}
               {pi.phone && <span>{pi.phone}</span>}
+              {pi.wechat && <span>{pi.wechat}</span>}
               {pi.location && <span>{pi.location}</span>}
+              {pi.linkedin && <span>LinkedIn: {pi.linkedin}</span>}
+              {pi.github && <span>GitHub: {pi.github}</span>}
             </div>
           </div>
         </div>
@@ -80,7 +91,7 @@ function MinimalSectionContent({ section, lang }: { section: any; lang?: string 
         {(content.items || []).map((item: any) => (
           <div key={item.id}>
             <p className="text-sm"><span className="font-medium text-zinc-800">{item.institution}</span></p>
-            <p className="text-sm text-zinc-600">{item.degree} {item.field && `- ${item.field}`}</p>
+            <p className="text-sm text-zinc-600">{degreeField(item.degree, item.field)}</p>
             <p className="text-xs text-zinc-400">{item.startDate} - {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</p>
             {item.gpa && <p className="text-xs text-zinc-400">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (

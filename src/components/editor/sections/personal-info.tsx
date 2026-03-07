@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Camera, X, Circle, RectangleVertical } from 'lucide-react';
 import { EditableText } from '../fields/editable-text';
+import { EditableSelect } from '../fields/editable-select';
 import { FieldWrapper } from '../fields/field-wrapper';
 import { useResumeStore } from '@/stores/resume-store';
 import type { ResumeSection, PersonalInfoContent } from '@/types/resume';
@@ -137,11 +138,55 @@ export function PersonalInfoSection({ section, onUpdate }: Props) {
         <EditableText label={t('jobTitle')} value={content.jobTitle} onChange={(v) => onUpdate({ jobTitle: v })} />
       </FieldWrapper>
       <FieldWrapper>
+        <EditableText label={t('age')} value={content.age || ''} onChange={(v) => onUpdate({ age: v })} />
+        <EditableSelect
+          label={t('gender')}
+          value={content.gender || ''}
+          onChange={(v) => onUpdate({ gender: v })}
+          options={t('genderOptions').split(',').map((s) => ({ label: s, value: s }))}
+        />
+      </FieldWrapper>
+      <FieldWrapper>
+        <EditableSelect
+          label={t('politicalStatus')}
+          value={content.politicalStatus || ''}
+          onChange={(v) => onUpdate({ politicalStatus: v })}
+          options={t('politicalStatusOptions').split(',').map((s) => ({ label: s, value: s }))}
+        />
+        <EditableSelect
+          label={t('ethnicity')}
+          value={content.ethnicity || ''}
+          onChange={(v) => onUpdate({ ethnicity: v })}
+          options={t('ethnicityOptions').split(',').map((s) => ({ label: s, value: s }))}
+        />
+      </FieldWrapper>
+      <FieldWrapper>
+        <EditableText label={t('hometown')} value={content.hometown || ''} onChange={(v) => onUpdate({ hometown: v })} />
+        <EditableSelect
+          label={t('maritalStatus')}
+          value={content.maritalStatus || ''}
+          onChange={(v) => onUpdate({ maritalStatus: v })}
+          options={t('maritalStatusOptions').split(',').map((s) => ({ label: s, value: s }))}
+        />
+      </FieldWrapper>
+      <FieldWrapper>
+        <EditableText label={t('yearsOfExperience')} value={content.yearsOfExperience || ''} onChange={(v) => onUpdate({ yearsOfExperience: v })} />
+        <EditableSelect
+          label={t('educationLevel')}
+          value={content.educationLevel || ''}
+          onChange={(v) => onUpdate({ educationLevel: v })}
+          options={t('educationLevelOptions').split(',').map((s) => ({ label: s, value: s }))}
+        />
+      </FieldWrapper>
+      <FieldWrapper>
         <EditableText label={t('email')} value={content.email} onChange={(v) => onUpdate({ email: v })} type="email" />
         <EditableText label={t('phone')} value={content.phone} onChange={(v) => onUpdate({ phone: v })} type="tel" />
       </FieldWrapper>
       <FieldWrapper>
+        <EditableText label={t('wechat')} value={content.wechat || ''} onChange={(v) => onUpdate({ wechat: v })} />
         <EditableText label={t('location')} value={content.location} onChange={(v) => onUpdate({ location: v })} />
+      </FieldWrapper>
+      <FieldWrapper>
         <EditableText label={t('website')} value={content.website || ''} onChange={(v) => onUpdate({ website: v })} />
       </FieldWrapper>
 

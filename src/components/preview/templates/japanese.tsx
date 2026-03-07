@@ -14,7 +14,7 @@ import type {
   GitHubContent,
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { QrCodesPreview } from '../qr-codes-preview';
 
 const PRIMARY = '#1c1917';
@@ -35,8 +35,17 @@ export function JapaneseTemplate({ resume }: { resume: Resume }) {
         <h1 className="text-2xl font-normal tracking-wide" style={{ color: PRIMARY }}>{pi.fullName || 'Your Name'}</h1>
         {pi.jobTitle && <p className="mt-2 text-xs font-normal tracking-[0.2em] uppercase" style={{ color: PRIMARY }}>{pi.jobTitle}</p>}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs" style={{ color: PRIMARY }}>
+          {pi.age && <span>{pi.age}</span>}
+          {pi.politicalStatus && <span>{pi.politicalStatus}</span>}
+          {pi.gender && <span>{pi.gender}</span>}
+          {pi.ethnicity && <span>{pi.ethnicity}</span>}
+          {pi.hometown && <span>{pi.hometown}</span>}
+          {pi.maritalStatus && <span>{pi.maritalStatus}</span>}
+          {pi.yearsOfExperience && <span>{pi.yearsOfExperience}</span>}
+          {pi.educationLevel && <span>{pi.educationLevel}</span>}
           {pi.email && <span>{pi.email}</span>}
           {pi.phone && <span>{pi.phone}</span>}
+          {pi.wechat && <span>{pi.wechat}</span>}
           {pi.location && <span>{pi.location}</span>}
           {pi.website && <span>{pi.website}</span>}
         </div>
@@ -106,7 +115,7 @@ function JapaneseSectionContent({ section, lang }: { section: any; lang?: string
         {((content as EducationContent).items || []).map((item: any) => (
           <div key={item.id}>
             <div className="flex items-baseline justify-between">
-              <h3 className="text-sm font-normal" style={{ color: PRIMARY }}>{item.degree}{item.field ? ` in ${item.field}` : ''}</h3>
+              <h3 className="text-sm font-normal" style={{ color: PRIMARY }}>{degreeField(item.degree, item.field)}</h3>
               <span className="shrink-0 text-[10px] font-light" style={{ color: ACCENT }}>{item.startDate} &ndash; {item.endDate || (lang === 'zh' ? '至今' : 'Present')}</span>
             </div>
             {item.institution && <p className="mt-0.5 text-xs font-light" style={{ color: ACCENT }}>{item.institution}{item.location ? `, ${item.location}` : ''}</p>}

@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, md, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
+import { esc, md, degreeField, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 function buildCompactRightContent(section: Section, lang: string): string {
   const c = section.content as any;
@@ -24,7 +24,7 @@ function buildCompactRightContent(section: Section, lang: string): string {
   }
   if (section.type === 'education') {
     return `<div class="space-y-2">${((c as EducationContent).items || []).map((it: any) => `<div>
-      <div class="flex items-baseline justify-between"><div><span class="text-xs font-bold text-zinc-800">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}</span>${it.institution ? `<span class="text-xs text-zinc-500"> — ${esc(it.institution)}</span>` : ''}${it.location ? `<span class="text-xs text-zinc-400">, ${esc(it.location)}</span>` : ''}</div><span class="shrink-0 text-[10px] text-zinc-400">${esc(it.startDate)} – ${esc(it.endDate) || (lang === 'zh' ? '至今' : 'Present')}</span></div>
+      <div class="flex items-baseline justify-between"><div><span class="text-xs font-bold text-zinc-800">${esc(degreeField(it.degree, it.field))}</span>${it.institution ? `<span class="text-xs text-zinc-500"> — ${esc(it.institution)}</span>` : ''}${it.location ? `<span class="text-xs text-zinc-400">, ${esc(it.location)}</span>` : ''}</div><span class="shrink-0 text-[10px] text-zinc-400">${esc(it.startDate)} – ${esc(it.endDate) || (lang === 'zh' ? '至今' : 'Present')}</span></div>
       ${it.gpa ? `<p class="text-[10px] text-zinc-500">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-0.5 list-disc pl-3.5">${buildHighlights(it.highlights, 'text-xs text-zinc-600')}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -98,8 +98,17 @@ export function buildCompactHtml(resume: ResumeWithSections): string {
 
   const contactParts: string[] = [];
   if (pi.jobTitle) contactParts.push(`<span class="font-medium text-zinc-700">${esc(pi.jobTitle)}</span>`);
+  if (pi.age) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.age)}</span>`); }
+  if (pi.gender) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.gender)}</span>`); }
+  if (pi.politicalStatus) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.politicalStatus)}</span>`); }
+  if (pi.ethnicity) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.ethnicity)}</span>`); }
+  if (pi.hometown) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.hometown)}</span>`); }
+  if (pi.maritalStatus) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.maritalStatus)}</span>`); }
+  if (pi.yearsOfExperience) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.yearsOfExperience)}</span>`); }
+  if (pi.educationLevel) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.educationLevel)}</span>`); }
   if (pi.email) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.email)}</span>`); }
   if (pi.phone) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.phone)}</span>`); }
+  if (pi.wechat) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.wechat)}</span>`); }
   if (pi.location) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.location)}</span>`); }
   if (pi.website) { contactParts.push(`<span class="text-zinc-300">|</span>`); contactParts.push(`<span>${esc(pi.website)}</span>`); }
 

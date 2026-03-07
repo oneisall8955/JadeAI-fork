@@ -14,7 +14,7 @@ import type {
   GitHubContent,
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { QrCodesPreview } from '../qr-codes-preview';
 
 const PRIMARY = '#1e293b';
@@ -24,7 +24,7 @@ export function MetroTemplate({ resume }: { resume: Resume }) {
   const personalInfo = resume.sections.find((s) => s.type === 'personal_info');
   const pi = (personalInfo?.content || {}) as PersonalInfoContent;
 
-  const contacts = [pi.email, pi.phone, pi.location, pi.website].filter(Boolean);
+  const contacts = [pi.age, pi.politicalStatus, pi.gender, pi.ethnicity, pi.hometown, pi.maritalStatus, pi.yearsOfExperience, pi.educationLevel, pi.email, pi.phone, pi.wechat, pi.location, pi.website].filter(Boolean);
 
   return (
     <div className="mx-auto max-w-[210mm] bg-white shadow-lg" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -51,6 +51,16 @@ export function MetroTemplate({ resume }: { resume: Resume }) {
                   {c}
                 </span>
               ))}
+              {pi.linkedin && (
+                <span className="px-2 py-0.5" style={{ backgroundColor: '#f8fafc', borderLeft: `2px solid ${AMBER}` }}>
+                  {pi.linkedin}
+                </span>
+              )}
+              {pi.github && (
+                <span className="px-2 py-0.5" style={{ backgroundColor: '#f8fafc', borderLeft: `2px solid ${AMBER}` }}>
+                  {pi.github}
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -132,7 +142,7 @@ function MetroSectionContent({ section, resume }: { section: any; resume: Resume
               <h3 className="text-sm font-bold" style={{ color: PRIMARY }}>{item.institution}</h3>
               <span className="text-xs text-zinc-400">{item.startDate} - {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
-            <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
+            <p className="text-sm text-zinc-600">{degreeField(item.degree, item.field)}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">

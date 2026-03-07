@@ -14,7 +14,7 @@ import type {
   GitHubContent,
 } from '@/types/resume';
 import { AvatarImage } from '../avatar-image';
-import { isSectionEmpty, md } from '../utils';
+import { degreeField, isSectionEmpty, md } from '../utils';
 import { QrCodesPreview } from '../qr-codes-preview';
 
 // Left sidebar section types
@@ -51,6 +51,54 @@ export function TwoColumnTemplate({ resume }: { resume: Resume }) {
 
         {/* Contact Info */}
         <div className="mb-6 space-y-1.5 text-xs">
+          {pi.age && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">Age:</span>
+              <span>{pi.age}</span>
+            </div>
+          )}
+          {pi.politicalStatus && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">Political:</span>
+              <span>{pi.politicalStatus}</span>
+            </div>
+          )}
+          {pi.gender && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">Gender:</span>
+              <span>{pi.gender}</span>
+            </div>
+          )}
+          {pi.ethnicity && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">Ethnicity:</span>
+              <span>{pi.ethnicity}</span>
+            </div>
+          )}
+          {pi.hometown && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">Hometown:</span>
+              <span>{pi.hometown}</span>
+            </div>
+          )}
+          {pi.maritalStatus && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">Marital:</span>
+              <span>{pi.maritalStatus}</span>
+            </div>
+          )}
+          {pi.yearsOfExperience && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">Experience:</span>
+              <span>{pi.yearsOfExperience}</span>
+            </div>
+          )}
+          {pi.educationLevel && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">Education:</span>
+              <span>{pi.educationLevel}</span>
+            </div>
+          )}
           {pi.email && (
             <div className="flex items-start gap-2 text-zinc-300">
               <span className="shrink-0 text-zinc-400">Email:</span>
@@ -61,6 +109,12 @@ export function TwoColumnTemplate({ resume }: { resume: Resume }) {
             <div className="flex items-start gap-2 text-zinc-300">
               <span className="shrink-0 text-zinc-400">Phone:</span>
               <span>{pi.phone}</span>
+            </div>
+          )}
+          {pi.wechat && (
+            <div className="flex items-start gap-2 text-zinc-300">
+              <span className="shrink-0 text-zinc-400">WeChat:</span>
+              <span>{pi.wechat}</span>
             </div>
           )}
           {pi.location && (
@@ -255,7 +309,7 @@ function RightSectionContent({ section, resume }: { section: any; resume: Resume
               <span className="text-sm font-semibold text-zinc-800">{item.institution}</span>
               <span className="shrink-0 text-xs text-zinc-400">{item.startDate} – {item.endDate || (resume.language === 'zh' ? '至今' : 'Present')}</span>
             </div>
-            <p className="text-sm text-zinc-600">{item.degree}{item.field ? ` in ${item.field}` : ''}</p>
+            <p className="text-sm text-zinc-600">{degreeField(item.degree, item.field)}</p>
             {item.gpa && <p className="text-xs text-zinc-500">GPA: {item.gpa}</p>}
             {item.highlights?.length > 0 && (
               <ul className="mt-1 list-disc pl-4">

@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, md, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
+import { esc, md, degreeField, getPersonalInfo, visibleSections, buildHighlights, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 function buildMinimalSectionContent(section: Section, lang: string = 'en'): string {
   const c = section.content as any;
@@ -26,7 +26,7 @@ function buildMinimalSectionContent(section: Section, lang: string = 'en'): stri
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div>
       <p class="text-sm"><span class="font-medium text-zinc-800">${esc(it.institution)}</span></p>
-      <p class="text-sm text-zinc-600">${esc(it.degree)} ${it.field ? `- ${esc(it.field)}` : ''}</p>
+      <p class="text-sm text-zinc-600">${esc(degreeField(it.degree, it.field))}</p>
       <p class="text-xs text-zinc-400">${esc(it.startDate)} - ${esc(it.endDate) || (lang === 'zh' ? '至今' : 'Present')}</p>
       ${it.gpa ? `<p class="text-xs text-zinc-400">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 list-disc pl-4">${buildHighlights(it.highlights, 'text-sm text-zinc-500')}</ul>` : ''}
@@ -87,8 +87,17 @@ export function buildMinimalHtml(resume: ResumeWithSections): string {
           <h1 class="text-xl font-medium text-zinc-900">${esc(pi.fullName || 'Your Name')}</h1>
           <div class="mt-1 flex flex-wrap gap-3 text-sm text-zinc-500">
             ${pi.jobTitle ? `<span>${esc(pi.jobTitle)}</span>` : ''}
+            ${pi.age ? `<span>${esc(pi.age)}</span>` : ''}
+            ${pi.gender ? `<span>${esc(pi.gender)}</span>` : ''}
+            ${pi.politicalStatus ? `<span>${esc(pi.politicalStatus)}</span>` : ''}
+            ${pi.ethnicity ? `<span>${esc(pi.ethnicity)}</span>` : ''}
+            ${pi.hometown ? `<span>${esc(pi.hometown)}</span>` : ''}
+            ${pi.maritalStatus ? `<span>${esc(pi.maritalStatus)}</span>` : ''}
+            ${pi.yearsOfExperience ? `<span>${esc(pi.yearsOfExperience)}</span>` : ''}
+            ${pi.educationLevel ? `<span>${esc(pi.educationLevel)}</span>` : ''}
             ${pi.email ? `<span>${esc(pi.email)}</span>` : ''}
             ${pi.phone ? `<span>${esc(pi.phone)}</span>` : ''}
+            ${pi.wechat ? `<span>${esc(pi.wechat)}</span>` : ''}
             ${pi.location ? `<span>${esc(pi.location)}</span>` : ''}
           </div>
         </div>

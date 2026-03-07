@@ -9,7 +9,7 @@ import type {
   CustomContent,
   GitHubContent,
 } from '@/types/resume';
-import { esc, md, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
+import { esc, md, degreeField, getPersonalInfo, visibleSections, buildQrCodesHtml, type ResumeWithSections, type Section } from '../utils';
 
 const DARK = '#0d1117';
 const BLUE = '#58a6ff';
@@ -76,7 +76,7 @@ function buildCoderMainContent(section: Section, lang: string): string {
   if (section.type === 'education') {
     return `<div class="space-y-3">${((c as EducationContent).items || []).map((it: any) => `<div>
       <div class="flex items-baseline justify-between"><h3 class="text-sm font-bold" style="color:${DARK}">${esc(it.institution)}</h3><span class="text-xs text-zinc-400">${esc(it.startDate)} - ${esc(it.endDate) || (lang === 'zh' ? '至今' : 'Present')}</span></div>
-      <p class="text-sm text-zinc-600">${esc(it.degree)}${it.field ? ` in ${esc(it.field)}` : ''}${it.location ? `<span class="text-zinc-400">, ${esc(it.location)}</span>` : ''}</p>
+      <p class="text-sm text-zinc-600">${esc(degreeField(it.degree, it.field))}${it.location ? `<span class="text-zinc-400">, ${esc(it.location)}</span>` : ''}</p>
       ${it.gpa ? `<p class="text-xs text-zinc-500">GPA: ${esc(it.gpa)}</p>` : ''}
       ${it.highlights?.length ? `<ul class="mt-1 space-y-0.5">${buildCoderHighlights(it.highlights)}</ul>` : ''}
     </div>`).join('')}</div>`;
@@ -155,8 +155,17 @@ export function buildCoderHtml(resume: ResumeWithSections): string {
         ${pi.jobTitle ? `<p class="mt-0.5 text-xs" style="color:${BLUE}">// ${esc(pi.jobTitle)}</p>` : ''}
       </div>
       <div class="mb-5 space-y-1.5 text-[11px]" style="border-top:1px solid ${BORDER};padding-top:12px">
+        ${pi.age ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.age)}</span></div>` : ''}
+        ${pi.gender ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.gender)}</span></div>` : ''}
+        ${pi.politicalStatus ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.politicalStatus)}</span></div>` : ''}
+        ${pi.ethnicity ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.ethnicity)}</span></div>` : ''}
+        ${pi.hometown ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.hometown)}</span></div>` : ''}
+        ${pi.maritalStatus ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.maritalStatus)}</span></div>` : ''}
+        ${pi.yearsOfExperience ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.yearsOfExperience)}</span></div>` : ''}
+        ${pi.educationLevel ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.educationLevel)}</span></div>` : ''}
         ${pi.email ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span class="break-all" style="color:#8b949e">${esc(pi.email)}</span></div>` : ''}
         ${pi.phone ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.phone)}</span></div>` : ''}
+        ${pi.wechat ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.wechat)}</span></div>` : ''}
         ${pi.location ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span style="color:#8b949e">${esc(pi.location)}</span></div>` : ''}
         ${pi.website ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span class="break-all" style="color:#8b949e">${esc(pi.website)}</span></div>` : ''}
         ${pi.github ? `<div class="flex items-start gap-2"><span style="color:${GREEN}">$</span><span class="break-all" style="color:#8b949e">${esc(pi.github)}</span></div>` : ''}
